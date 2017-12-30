@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://dancefirstthinklater.github.io/2017/12/30/Java%20Tools%20-%20JPDA/</loc>
+    
+    <lastmod>2017-12-30T12:56:06.133Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://dancefirstthinklater.github.io/2017/11/24/Java%20Concurrent%20-%20ThreadPoolExecutor/</loc>
     
     <lastmod>2017-12-30T12:10:43.606Z</lastmod>
