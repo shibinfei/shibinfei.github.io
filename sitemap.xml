@@ -2,9 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://dancefirstthinklater.github.io/2018/01/29/Java%20Concurrent%20-%20DelayQueue/</loc>
+    
+    <lastmod>2018-01-31T11:05:23.493Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://dancefirstthinklater.github.io/2018/01/24/Java%20Concurrent%20-%20CopyOnWriteArrayList/</loc>
+    
+    <lastmod>2018-01-31T11:05:19.055Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://dancefirstthinklater.github.io/2018/01/30/Java%20Concurrent%20-%20AQS%20&%20Worker/</loc>
     
-    <lastmod>2018-01-31T09:59:55.155Z</lastmod>
+    <lastmod>2018-01-31T11:05:13.256Z</lastmod>
     
   </url>
   
@@ -12,20 +26,6 @@
     <loc>https://dancefirstthinklater.github.io/tags/index.html</loc>
     
     <lastmod>2018-01-31T09:16:24.297Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://dancefirstthinklater.github.io/2018/01/29/Java%20Concurrent%20-%20DelayQueue/</loc>
-    
-    <lastmod>2018-01-29T12:58:08.127Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://dancefirstthinklater.github.io/2018/01/24/Java%20Concurrent%20-%20CopyOnWriteArrayList/</loc>
-    
-    <lastmod>2018-01-24T06:34:46.137Z</lastmod>
     
   </url>
   
