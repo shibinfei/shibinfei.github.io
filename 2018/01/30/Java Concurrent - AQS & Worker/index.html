@@ -79,20 +79,20 @@
 
 
 
-<meta name="description" content="1. Overview之前提到过, ThreadPoolExecutor的内部类Worker维护了一个非常基本的锁结构. 方法不多, 可以由名知义: - lock - tryLock - unlock - isLocked Worker本身继承了AbstractQueuedSynchronizer(AQS)来实现上述的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们先从">
+<meta name="description" content="1. Overview之前提到过, ThreadPoolExecutor的内部类Worker维护了一个非常基本的锁结构. 方法不多, 可以由名知义: - lock - tryLock - unlock - isLocked Worker本身继承了AbstractQueuedSynchronizer(AQS)来实现上述功能的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们">
 <meta name="keywords" content="Java Concurrent">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java Concurrent - AQS &amp; Worker">
 <meta property="og:url" content="https://dancefirstthinklater.github.io/2018/01/30/Java Concurrent - AQS & Worker/index.html">
 <meta property="og:site_name" content="嘤嘤嘤">
-<meta property="og:description" content="1. Overview之前提到过, ThreadPoolExecutor的内部类Worker维护了一个非常基本的锁结构. 方法不多, 可以由名知义: - lock - tryLock - unlock - isLocked Worker本身继承了AbstractQueuedSynchronizer(AQS)来实现上述的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们先从">
+<meta property="og:description" content="1. Overview之前提到过, ThreadPoolExecutor的内部类Worker维护了一个非常基本的锁结构. 方法不多, 可以由名知义: - lock - tryLock - unlock - isLocked Worker本身继承了AbstractQueuedSynchronizer(AQS)来实现上述功能的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://7xokux.com1.z0.glb.clouddn.com/TheadPoolExecutor-Worker-tryLock.png">
 <meta property="og:image" content="http://7xokux.com1.z0.glb.clouddn.com/ThreadPoolExecutor-Worker%23Lock.png">
-<meta property="og:updated_time" content="2018-01-30T06:59:35.845Z">
+<meta property="og:updated_time" content="2018-01-31T09:59:55.155Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java Concurrent - AQS &amp; Worker">
-<meta name="twitter:description" content="1. Overview之前提到过, ThreadPoolExecutor的内部类Worker维护了一个非常基本的锁结构. 方法不多, 可以由名知义: - lock - tryLock - unlock - isLocked Worker本身继承了AbstractQueuedSynchronizer(AQS)来实现上述的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们先从">
+<meta name="twitter:description" content="1. Overview之前提到过, ThreadPoolExecutor的内部类Worker维护了一个非常基本的锁结构. 方法不多, 可以由名知义: - lock - tryLock - unlock - isLocked Worker本身继承了AbstractQueuedSynchronizer(AQS)来实现上述功能的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们">
 <meta name="twitter:image" content="http://7xokux.com1.z0.glb.clouddn.com/TheadPoolExecutor-Worker-tryLock.png">
 
 
@@ -340,7 +340,7 @@
 - tryLock
 - unlock
 - isLocked
-</code></pre><p><code>Worker</code>本身继承了<code>AbstractQueuedSynchronizer</code>(AQS)来实现上述的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们先从这些并发工具中最简单的<code>Worker</code>开始, 之后逐步递进:</p>
+</code></pre><p><code>Worker</code>本身继承了<code>AbstractQueuedSynchronizer</code>(AQS)来实现上述功能的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们先从这些并发工具中最简单的<code>Worker</code>开始, 之后逐步递进:</p>
 <pre><code>- ThreadPoolExecutor#Worker
 - CountDownLatch
 - Semaphore
