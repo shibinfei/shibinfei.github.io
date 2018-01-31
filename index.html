@@ -1,1 +1,1571 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title>嘤嘤嘤</title><meta name="description" content="A Blog Powered By Hexo"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/theme.css"><link rel="search" type="application/opensearchdescription+xml" href="/atom.xml" title="嘤嘤嘤"></head><body><div class="wrap"><header><h1 class="branding"><a href="/" title="嘤嘤嘤"><img class="logo-image" src="/logo.png" alt="logo"></a></h1><ul class="nav nav-list"><li class="nav-list-item"><a class="nav-list-link active" href="/" target="_self">HOME</a></li><li class="nav-list-item"><a class="nav-list-link" href="/archives" target="_self">ARCHIVES</a></li><li class="nav-list-item"><a class="nav-list-link" href="https://github.com/DanceFirstThinkLater" target="_blank">GITHUB</a></li></ul></header><main class="container"><ul class="home post-list"><li class="post-list-item"><article class="post-block"><h2 class="post-title"><a class="post-title-link" href="/2018/01/30/Java Concurrent - AQS &amp; Worker/">Java Concurrent - AQS & Worker</a></h2><div class="post-info"><a></a>2018-01-30</div><div class="post-content"></div><a class="read-more" href="/2018/01/30/Java Concurrent - AQS &amp; Worker/">&hellip; more</a></article></li><li class="post-list-item"><article class="post-block"><h2 class="post-title"><a class="post-title-link" href="/2018/01/29/Java Concurrent - DelayQueue/">Java Concurrent - DelayQueue</a></h2><div class="post-info"><a></a>2018-01-29</div><div class="post-content"></div><a class="read-more" href="/2018/01/29/Java Concurrent - DelayQueue/">&hellip; more</a></article></li><li class="post-list-item"><article class="post-block"><h2 class="post-title"><a class="post-title-link" href="/2018/01/24/Java Concurrent - CopyOnWriteArrayList/">Java Concurrent - CopyOnWriteArrayList</a></h2><div class="post-info"><a></a>2018-01-24</div><div class="post-content"></div><a class="read-more" href="/2018/01/24/Java Concurrent - CopyOnWriteArrayList/">&hellip; more</a></article></li><li class="post-list-item"><article class="post-block"><h2 class="post-title"><a class="post-title-link" href="/2018/01/05/Java Tools - jstack/">Java Tools - jstack</a></h2><div class="post-info"><a></a>2018-01-05</div><div class="post-content"></div><a class="read-more" href="/2018/01/05/Java Tools - jstack/">&hellip; more</a></article></li><li class="post-list-item"><article class="post-block"><h2 class="post-title"><a class="post-title-link" href="/2017/11/24/Java Concurrent - ThreadPoolExecutor/">Java Concurrent - ThreadPoolExecutor特性&实现</a></h2><div class="post-info"><a></a>2017-11-24</div><div class="post-content"></div><a class="read-more" href="/2017/11/24/Java Concurrent - ThreadPoolExecutor/">&hellip; more</a></article></li></ul></main><footer><div class="paginator"></div><div class="copyright"><p>&copy; 2018 <a href="https://dancefirstthinklater.github.io">shibinfei</a>.<br>Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/Dreyer/hexo-theme-artemis" target="_blank">Artemis</a>.</p></div></footer></div></body></html>
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="嘤嘤嘤" type="application/atom+xml" />
+
+
+
+
+
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="嘤嘤嘤">
+<meta property="og:url" content="https://dancefirstthinklater.github.io/index.html">
+<meta property="og:site_name" content="嘤嘤嘤">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="嘤嘤嘤">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://dancefirstthinklater.github.io/"/>
+
+
+
+
+
+  <title>嘤嘤嘤</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left 
+  page-home">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">嘤嘤嘤</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dancefirstthinklater.github.io/2018/01/30/Java Concurrent - AQS & Worker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="shibinfei">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="嘤嘤嘤">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/30/Java Concurrent - AQS & Worker/" itemprop="url">Java Concurrent - AQS & Worker</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-30T14:58:49+08:00">
+                2018-01-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="1-Overview"><a href="#1-Overview" class="headerlink" title="1. Overview"></a>1. Overview</h2><p>之前提到过, <code>ThreadPoolExecutor</code>的内部类<code>Worker</code>维护了一个非常基本的锁结构. 方法不多, 可以由名知义:</p>
+<pre><code>- lock
+- tryLock
+- unlock
+- isLocked
+</code></pre><p><code>Worker</code>本身继承了<code>AbstractQueuedSynchronizer</code>(AQS)来实现上述的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们先从这些并发工具中最简单的<code>Worker</code>开始, 之后逐步递进:</p>
+<pre><code>- ThreadPoolExecutor#Worker
+- CountDownLatch
+- Semaphore
+- FutureTask (JDK 1.6)
+- ReentrantLock
+- ConditionObject
+- ReadWriteReentrantLock
+- AQS总结
+</code></pre><h2 id="2-一个最简单的独占锁"><a href="#2-一个最简单的独占锁" class="headerlink" title="2. 一个最简单的独占锁"></a>2. 一个最简单的独占锁</h2><p>我们可以基于CAS实现一种锁. 代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">import java.util.concurrent.atomic.AtomicBoolean;</span><br><span class="line">/**</span><br><span class="line"> *</span><br><span class="line"> * @author shibinfei</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class CASLock &#123;</span><br><span class="line"></span><br><span class="line">	/*</span><br><span class="line">	 * 锁状态: false 表示当前没有被占用, true表示被占用</span><br><span class="line">	 */</span><br><span class="line">	private AtomicBoolean lockState = new AtomicBoolean(false);</span><br><span class="line"></span><br><span class="line">	/*</span><br><span class="line">	 * 当前持有锁的线程</span><br><span class="line">	 */</span><br><span class="line">	private Thread lockHolder;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	 * 尝试获取锁, 如果获取成功返回true, 获取失败立即返回false</span><br><span class="line">	 * 可重入:</span><br><span class="line">	 * @return true if success</span><br><span class="line">	 */</span><br><span class="line">	public boolean tryLock() &#123;</span><br><span class="line">		if (lockState.get() == false) &#123;</span><br><span class="line">			if (lockState.compareAndSet(false, true)) &#123;</span><br><span class="line">				lockHolder = Thread.currentThread();</span><br><span class="line">				return true;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; else if (lockHolder == Thread.currentThread()) &#123;</span><br><span class="line">			// 同一个线程重入</span><br><span class="line">			return true;</span><br><span class="line">		&#125;</span><br><span class="line">		return false;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	 * 解除当前线程锁定</span><br><span class="line">	 */</span><br><span class="line">	public void unlock() &#123;</span><br><span class="line">		if (Thread.currentThread() != lockHolder) &#123;</span><br><span class="line">			throw new IllegalMonitorStateException();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		lockHolder = null;</span><br><span class="line">		lockState.set(false);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>类比我们的布尔变量<code>lockState</code>, AQS中使用的是一个整形字段 - <code>state</code>. 在互斥(即同时只能由一个线程持有锁)的场景下, <code>state</code>可能的取值只有0 / 1两种, 分别对应<code>false</code>, <code>true</code>.</li>
+<li><code>tryLock</code>只是简单的尝试获取锁,  而在实际的<code>lock</code>方法中, 等待获取锁的线程都是被阻塞住的. 而这些线程的引用, 被维护于一个队列结构中.</li>
+</ul>
+<h2 id="3-A-Thread-Safe-Queue"><a href="#3-A-Thread-Safe-Queue" class="headerlink" title="3. A Thread-Safe Queue"></a>3. A Thread-Safe Queue</h2><p>AQS中另一个主体是一个基于双向链表的队列结构. 不考虑AQS逻辑, 实现如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * A queue based on doubly linked list and compare-and-set pattern</span><br><span class="line"> *</span><br><span class="line"> * @author shibinfei</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class ThreadSafeQueue &#123;</span><br><span class="line"></span><br><span class="line">	private volatile AtomicReference&lt;Node&gt; head;</span><br><span class="line"></span><br><span class="line">	private volatile AtomicReference&lt;Node&gt; tail;</span><br><span class="line"></span><br><span class="line">	public ThreadSafeQueue() &#123;</span><br><span class="line">		Node initialNode = new Node();</span><br><span class="line">		head.set(initialNode);</span><br><span class="line">		tail.set(initialNode);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void enqueue(Node node) &#123;</span><br><span class="line">		Node tailNode = tail.get();</span><br><span class="line">		for (;;) &#123;</span><br><span class="line">			node.prev = tailNode;</span><br><span class="line">			if (tail.compareAndSet(tailNode, node)) &#123;</span><br><span class="line">				tailNode.next = node;</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	static class Node &#123;</span><br><span class="line">		volatile Node prev;</span><br><span class="line">		volatile Node next;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>初始状态下, <code>head</code>, <code>tail</code>指向同一个节点. 如果没有出队列操作, 只是修改<code>tail</code>引用的节点.  观察<code>enqueue</code>方法, 思路和<code>Atomic</code>工具中的<code>getAndSet</code>思路是一致的. 示例中的类和变量在AQS中都可以找到对应.</p>
+<h2 id="4-Worker"><a href="#4-Worker" class="headerlink" title="4. Worker"></a>4. Worker</h2><p>AQS是一个抽象类. 其他工具都是以继承的方式覆盖AQS的几个钩子方法.</p>
+<h3 id="4-1-tryLock"><a href="#4-1-tryLock" class="headerlink" title="4.1 tryLock"></a>4.1 tryLock</h3><p><code>Worker#tryLock</code>和我们的<code>CASLock</code>的基本思想是一致的, 即通过一个原子变量来表示当前锁的状态, 只不过<code>CASLock</code>中使用的是<code>true/false</code>, 而<code>Worker</code>中使用的是<code>1/0</code>, 维持这个状态的是继承于AQS的<code>state</code>字段.</p>
+<p>从下面的流程图可以看出来整体逻辑非常简单. 从这里开始, 稍微值得关注是一个问题是哪些方法是<code>Worker</code>重载的, 而哪些是继承的.</p>
+<p><img src="http://7xokux.com1.z0.glb.clouddn.com/TheadPoolExecutor-Worker-tryLock.png" alt=""></p>
+<p>当成功拿到锁之后, 会将<code>exclusiveOwnerThread</code>设为当前线程, 根据名称可以看出来, 仅当独占时才会用到此变量.</p>
+<h3 id="4-2-isLocked"><a href="#4-2-isLocked" class="headerlink" title="4.2 isLocked"></a>4.2 isLocked</h3><p>同样是基于<code>state</code>的简单逻辑: 即<code>AQS#getState() == 0</code>.</p>
+<h3 id="4-3-lock"><a href="#4-3-lock" class="headerlink" title="4.3 lock"></a>4.3 lock</h3><p><code>lock</code>的方法比较复杂. 如图:<br><img src="http://7xokux.com1.z0.glb.clouddn.com/ThreadPoolExecutor-Worker%23Lock.png" alt=""></p>
+<ul>
+<li>进入方法时, 首先进行了一次<code>tryAcquire</code>, 如果成功那真是最好的结局. 否则开始”等待”.</li>
+<li>等待指的就是当前线程被抽象为一个节点, 进入了队列尾端(See <code>addWaiter</code>) . 就开始”等待”, 随即进入<code>AQS#acquireQueued</code>逻辑.</li>
+<li><code>acquireQueued</code>内, 线程进入了一个循环体系中.<ul>
+<li>仅当满足 <strong> 当前节点前面节点为头结点 </strong> 并且 <strong> tryAcquire成功 </strong>时才能跳出循环.  此时为成功获取锁.</li>
+<li>不满足上述条件线程, 会被挂起(park).  如果一个线程此时无法获取锁, 注意它的前置节点<code>waitStatus</code>初始为0, <code>shouldParkAfterFailedAcquire</code>方法中会将其置为<code>Node.SIGNAL</code>. 而在下次循环中, 此线程才被真正挂起.</li>
+</ul>
+</li>
+</ul>
+<p>看到这里, 如果对于下面几个问题有疑问, 先保留.</p>
+<ul>
+<li><code>waitStatus</code>是干什么的?</li>
+<li>线程在<code>parkAndCheckInterrupt</code>中, 调用的是<code>Thread.interrupted()</code>. 如我们所知, 这个方法会清楚并返回线程的中断状态. 而<code>acquireQueued</code>中如果曾经被中断过, 就会把中断状态返回给<code>acquire</code>, <code>acquire</code>中调用<code>selfInterrupt</code>, 重新将当前线程中断状态设置为`true</li>
+<li>何时执行到<code>acquireQueued</code>内部<code>final</code>块调用的<code>cancelAcquire</code>?. 在<code>acquireQueue</code>中的循环, 只有一个出口即满足<code>p == head &amp;&amp; tryAcquire(arg)</code>. 而此时<code>fail</code>将一定为<code>false</code>, 所以看似一定不会<code>cancelAcquire</code></li>
+</ul>
+<hr>
+<p> <code>Worker</code>看似是一个很典型的锁. 但是注意的是它的构造方法有这么一句<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setState(-1); // inhibit interrupts until runWorker</span><br></pre></td></tr></table></figure></p>
+<p>初始情况<code>state == -1</code>, 所以<code>compareAndSet(0, 1)</code>是永远无法成功的, 后面对此进行说明. 这里先假设, 初始状态<code>state == 0</code>.</p>
+<p>// TODO 具体实例 数据变化图 +</p>
+<h3 id="4-4-unlock"><a href="#4-4-unlock" class="headerlink" title="4.4 unlock"></a>4.4 unlock</h3><p>假如线程A获取了锁, 线程B在等待. 当前专题下</p>
+<ul>
+<li><code>Worker</code>的<code>tryRelease</code>方法是一定会成功的.</li>
+</ul>
+<p>// TODO 流程图 + 实例</p>
+<h3 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h3><p>虽然前文曾经表示可以暂时将<code>Worker</code>看作一个<code>ReentrantLock</code>, 然后实际上两者行为还是有一些不一致的. 先来看下, <code>ThreadPoolExecutor</code>都有哪里调用了<code>Worker</code>的锁行为.</p>
+<ol>
+<li>构造方法设置<code>state</code>为-1.</li>
+<li><code>runWorker</code>时先<code>unlock</code></li>
+<li>在循环中, 每个task执行前后<code>lock</code>, <code>unlock</code></li>
+<li><code>interruptIdleWorkers</code>前后<code>tryLock</code>, <code>unlock</code></li>
+</ol>
+<p>第1, 2点注释也有说明, 1是为了禁止被<code>interrupt</code>, 2是允许<code>interrupt</code>.  而且由于第一点的存在, 如果当做普通锁, 上了就<code>lock()</code>的话, 是会一直阻塞的, 所以前面把初始状态设置为0.</p>
+<p>在大部分情况下, Woker这个同步工具并没有涉及到多线程间通信, 它只被线程池中的线程持有. 而当主线程试图<code>interrupt</code>线程池中线程时, 才有多个线程对锁的争用.  <code>ThreadPoolExecutor</code>中</p>
+<ul>
+<li><code>shutdown</code>中会调用<code>interruptIdleWorkers</code>(<code>tryLock</code>成功再<code>interrupt</code>)</li>
+<li><code>shutdownNow</code>调用<code>interruptWorkers</code>(对所有线程都<code>interrupt</code>).</li>
+</ul>
+<p>这两个方法中一个会判断<code>getState() &gt;= 0</code>, 一个会<code>tryLock()</code>. 所以当<code>getState() == -1</code>时两个操作都无效.</p>
+<p>另外, <code>Worker</code>的<code>tryRelease</code>方法很粗暴. 如果有<code>ReentrantLock</code>使用经验会发现, 如果某线程不是锁的持有者但又试图<code>unlock</code>, 会抛出<code>IllegalMonitorStateException</code>.  而<code>Worker</code>则不然, A线程<code>lock</code>后B线程也可以<code>unlock</code>.</p>
+<p>单独提取<code>Worker</code>中部分同步相关代码, 可以注意下那些方法是<code>Override</code>的, 以及暴露的方法和AQS的对应关系:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">@SuppressWarnings(&quot;serial&quot;)</span><br><span class="line">public class Worker extends AbstractQueuedSynchronizer &#123;</span><br><span class="line"></span><br><span class="line">	public Worker() &#123;</span><br><span class="line">		super();</span><br><span class="line">		setState(-1);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected boolean isHeldExclusively() &#123;</span><br><span class="line">		return getState() != 0;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected boolean tryAcquire(int unused) &#123;</span><br><span class="line">		if (compareAndSetState(0, 1)) &#123;</span><br><span class="line">			setExclusiveOwnerThread(Thread.currentThread());</span><br><span class="line">			return true;</span><br><span class="line">		&#125;</span><br><span class="line">		return false;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	protected boolean tryRelease(int unused) &#123;</span><br><span class="line">		setExclusiveOwnerThread(null);</span><br><span class="line">		setState(0);</span><br><span class="line">		return true;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void lock() &#123;</span><br><span class="line">		acquire(1);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public boolean tryLock() &#123;</span><br><span class="line">		return tryAcquire(1);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void unlock() &#123;</span><br><span class="line">		release(1);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public boolean isLocked() &#123;</span><br><span class="line">		return isHeldExclusively();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dancefirstthinklater.github.io/2018/01/29/Java Concurrent - DelayQueue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="shibinfei">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="嘤嘤嘤">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/29/Java Concurrent - DelayQueue/" itemprop="url">Java Concurrent - DelayQueue</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-29T20:57:34+08:00">
+                2018-01-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><ul>
+<li>阅读前需要了解<code>DelayQueue</code>的基本使用. 可以参考 <a href="http://www.baeldung.com/java-delay-queue" target="_blank" rel="noopener">Guide to DelayQueue | Baeldung</a></li>
+</ul>
+<h2 id="SimpleDelayQueue"><a href="#SimpleDelayQueue" class="headerlink" title="SimpleDelayQueue"></a>SimpleDelayQueue</h2><p><code>DelayQueue</code>的基本思想很简单:</p>
+<ul>
+<li>内部容器为一个优先队列, 优先条件为出队列时间. 即应该出队列的时间越早越优先.</li>
+<li>通过<code>Condition#awaitNanos</code>来实现时间上的延迟. 举例, 假设队列中只有一个元素, 需要延迟1秒. 那么试图获取此元素的线程就需要<code>await(1, TimeUnit.SECONDS)</code></li>
+</ul>
+<p><code>DelayQueue</code>的成员非常少, 都列在下方. 其中的<code>leader</code>可以暂时忽略.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private transient final ReentrantLock lock = new ReentrantLock();</span><br><span class="line"></span><br><span class="line">private final PriorityQueue&lt;E&gt; q = new PriorityQueue&lt;E&gt;();</span><br><span class="line"></span><br><span class="line">private Thread leader = null;</span><br><span class="line"></span><br><span class="line">private final Condition available = lock.newCondition();</span><br></pre></td></tr></table></figure>
+<p>值得注意的一点是, 虽然<code>DelayQueue</code>是<code>BlockingQueue</code>的实现, 但是<code>DelayQueue</code>的所有插入方法都不会阻塞, <code>put</code>方法也只是调用了<code>offer</code>而已:</p>
+<blockquote>
+<p> Inserts the specified element into this delay queue. As the queue is unbounded this method will never block.</p>
+</blockquote>
+<p>如果不考虑<code>leader</code>, 可以仅仅<strong>基于<code>lock</code>, <code>awailable</code>,<code>q</code>实现一个更加简单的延迟队列</strong>. 我们只实现两个最核心的方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * A delay queue without leader</span><br><span class="line"> * @author shibinfei</span><br><span class="line"> *</span><br><span class="line"> * @param &lt;E&gt;</span><br><span class="line"> */</span><br><span class="line">public class SimpleDelayQueue&lt;E extends Delayed&gt; &#123;</span><br><span class="line"></span><br><span class="line">	private final ReentrantLock lock = new ReentrantLock();</span><br><span class="line"></span><br><span class="line">	private final PriorityQueue&lt;E&gt; q = new PriorityQueue&lt;E&gt;();</span><br><span class="line"></span><br><span class="line">	private final Condition available = lock.newCondition();</span><br><span class="line"></span><br><span class="line">	public boolean offer(E e) &#123;</span><br><span class="line">		final ReentrantLock lock = this.lock;</span><br><span class="line">		lock.lock();</span><br><span class="line">		try &#123;</span><br><span class="line">			q.offer(e);</span><br><span class="line"></span><br><span class="line">			if (q.peek() == e) &#123;</span><br><span class="line">				available.signal();</span><br><span class="line">			&#125;</span><br><span class="line">			return true;</span><br><span class="line">		&#125; finally &#123;</span><br><span class="line">			lock.unlock();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public E take() throws InterruptedException &#123;</span><br><span class="line">		final ReentrantLock lock = this.lock;</span><br><span class="line">		lock.lockInterruptibly();</span><br><span class="line">		try &#123;</span><br><span class="line">			for (;;) &#123;</span><br><span class="line">				E first = q.peek();</span><br><span class="line">				if (first == null) &#123;</span><br><span class="line">					available.await();</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					long delay = first.getDelay(TimeUnit.NANOSECONDS);</span><br><span class="line">					if (delay &lt;= 0) &#123;</span><br><span class="line">						return q.poll();</span><br><span class="line">					&#125; else &#123;</span><br><span class="line">						available.awaitNanos(delay);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; finally &#123;</span><br><span class="line">			if (q.peek() != null) &#123;</span><br><span class="line">				available.signal();</span><br><span class="line">			&#125;</span><br><span class="line">			lock.unlock();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="offer"><a href="#offer" class="headerlink" title="offer"></a>offer</h3><p><code>offer</code>主体可以说是非常简单了:</p>
+<ul>
+<li>向优先队列中插入元素</li>
+<li>如果刚刚插入的元素为队列头部. 那么则对其他线程进行<code>signal</code>.  可以猜想在典型的生产线程/消费线程情况下, 没有拿到元素的线程应该是在<code>await</code>状态, 所以<code>signal</code>唤醒其中一个消费线程是必要的. 而如果元素不是队列的head, 那么通常表示此元素还不需要出队列, 没有必要白白唤醒一个线程. (TODO)</li>
+</ul>
+<h3 id="take"><a href="#take" class="headerlink" title="take"></a>take</h3><p><code>take</code>的逻辑可以简单看一眼. 如果感觉不清晰没关系, 后面的举例更明了. 也可以参考流程图:</p>
+<p><img src="http://7xokux.com1.z0.glb.clouddn.com/DelayQueue-Simplified.png" alt=""></p>
+<h3 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h3><p>假设实现一种延迟指定秒的<code>Delay</code>, <code>new FixedSecondsDelay(5)</code>表示延迟5秒. 如果对实现感兴趣可以看如下代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 一种 &#123;@code Delayed&#125; 实现: 在指定秒之后可以出队列</span><br><span class="line"> * @author shibinfei</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class FixedSecondsDelay implements Delayed &#123;</span><br><span class="line"></span><br><span class="line">	// 可以出队列的时间</span><br><span class="line">	private Date outTime;</span><br><span class="line"></span><br><span class="line">	public Date getOutTime() &#123;</span><br><span class="line">		return outTime;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public FixedSecondsDelay(long secondsToBeReady) &#123;</span><br><span class="line">		this.outTime = new Date(System.currentTimeMillis() + secondsToBeReady * 1000);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public int compareTo(Delayed o) &#123;</span><br><span class="line">		return outTime.compareTo(((FixedSecondsDelay)o).getOutTime());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public long getDelay(TimeUnit unit) &#123;</span><br><span class="line">		return unit.convert(outTime.getTime() - System.currentTimeMillis(), TimeUnit.MILLISECONDS);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">DelayQueue&lt;FixedSecondsDelay&gt; delayQueue = new DelayQueue&lt;&gt;();</span><br><span class="line"></span><br><span class="line">for (int i = 0; i &lt; 2; i++) &#123;</span><br><span class="line">	new Thread(() -&gt; &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			delayQueue.take();	// wait if elements can&apos;t be polled</span><br><span class="line">		&#125; catch (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;, &quot;Thread&quot; + i).start();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">TimeUnit.SECONDS.sleep(2); // 保证前两个线程先执行</span><br><span class="line">delayQueue.put(new FixedSecondsDelay(2));	// can be polled after 2 seconds</span><br></pre></td></tr></table></figure>
+<p>整个过程中涉及到了三个线程, 分别为循环中创建的消费线程<code>Thread0</code>, <code>Thread1</code>和主线程<code>Main</code>. 接下来对整个流程进行流水账说明:</p>
+<pre><code>1. `Thread0`获取锁之后, 马上进入了`await`, 而此操作释放了锁, 则`Thread1`进入, 同样进入`await`状态.
+2. 接下来`Main`线程, 放入了一个两秒后可以出队列的元素,   此时只有一个元素, 故亦为队列头元素. 所以会`signal`一个等待线程, 假设为`Thread1`
+3. 被唤醒的`Thread1` 进入了下次循环, 而此时头部元素不为空, 但是还没到时间, 仍需2秒才能出队列, 故`Thread1`开始`awaitNanos(delay)` (2秒) , 结束`awaitNanos`之后, 下次循环即可取出元素. 随机返回.
+</code></pre><p>制造一个更加复杂一点的场景, <code>delayQueue.put(new FixedSecondsDelay(2));</code>之后再追加一个<code>delayQueue.put(new FixedSecondsDelay(5));</code>. 那么和上方, 第1, 2步是相同的. 第3步有一些差别:</p>
+<pre><code>3. 5秒出队列的元素, 由于不是队列头, 所以并没有去唤醒任一线程. 但是当`Thread1`结束之后, 会去`signal`等待的`Thread0`来继续处理此元素.  
+</code></pre><h2 id="Leader-follower"><a href="#Leader-follower" class="headerlink" title="Leader - follower"></a>Leader - follower</h2><h3 id="第一印象"><a href="#第一印象" class="headerlink" title="第一印象"></a>第一印象</h3><blockquote>
+<p>Thread designated to wait for the element at the head of the queue.  This variant of the Leader-Follower pattern (<a href="http://www.cs.wustl.edu/~schmidt/POSA/POSA2/" target="_blank" rel="noopener">http://www.cs.wustl.edu/~schmidt/POSA/POSA2/</a>) serves to minimize unnecessary timed waiting.  When a thread becomes the leader, it waits only for the next delay to elapse, but other threads await indefinitely.</p>
+</blockquote>
+<p>这是关于<code>leader</code>的前半部分注释. 实际上”timed_waiting”以及”waits only for the next delay to elapse”的实际行为都是<code>awaitNanos</code>. 相应的, “await indefinitely”即<code>await</code>. 加深一下印象:</p>
+<pre><code>- leader表示等待处理队列head元素的线程
+- 减少不必要的`awaitNanos`.
+</code></pre><p>总体来讲, <code>leader</code>的作用就是尽量让线程处于<code>await</code>状态, 而不是<code>await</code>. 可想而知这基于一个前提: <code>awaitNanos</code>会带来不必要的性能消耗.</p>
+<h3 id="如何减少awaitNanos"><a href="#如何减少awaitNanos" class="headerlink" title="如何减少awaitNanos"></a>如何减少<code>awaitNanos</code></h3><p>对比<code>DelayQueue</code>和<code>SimpleDelayQueue</code>.  前者多了这些判断</p>
+<ul>
+<li><code>offer</code> 中如果为头元素, 会将<code>leader</code>设置为<code>null</code></li>
+<li><code>take</code>中判断<code>leader != null</code>, 会进入<code>await</code>.  并且<code>awaitNanos</code>前后分别会占用/放弃<code>leader</code>位置.</li>
+</ul>
+<p>当面临如下场景时:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">DelayQueue&lt;Delayed&gt; delayQueue = new DelayQueue&lt;&gt;();</span><br><span class="line">Delayed delayed = new FixedSecondsDelay(10);	// 10 seconds to be ready</span><br><span class="line">delayQueue.offer(delayed);</span><br><span class="line"></span><br><span class="line">for (int i = 0; i &lt; 2; i++) &#123;</span><br><span class="line">	new Thread(() -&gt; &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			delayQueue.take();</span><br><span class="line">		&#125; catch (InterruptedException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>假设两个线程为<code>Thread0</code>, <code>Thread1</code>.  其中一个先获取锁之后, 占用了<code>leader</code>, 开始<code>awaitNanos</code>. 而另一个线程判断当前<code>leader</code>不为空, 则进入了<code>await</code>状态. 相比之下<code>SimpleDelayQueue</code>在这种场景中, 两个线程都在<code>awaitNanos</code>.</p>
+<h3 id="Leader-Summary"><a href="#Leader-Summary" class="headerlink" title="Leader Summary"></a>Leader Summary</h3><ul>
+<li>在处理队列head的线程才能是<code>leader</code>. 如果队列head更换, 那么对应线程的<code>leader</code>位置就不保了.</li>
+<li>一个线程成为<code>leader</code>之后, 它<code>awaitNanos</code>, 其他线程<code>await</code>(这句话在上面的case适用, 但是不是所有场景都如此)</li>
+<li><code>leader</code>拿完元素走人之后, 要<code>signal</code>其他线程(follower).</li>
+</ul>
+<h2 id="TODO-md-感觉说的不够清楚"><a href="#TODO-md-感觉说的不够清楚" class="headerlink" title="TODO // md 感觉说的不够清楚"></a>TODO // md 感觉说的不够清楚</h2><h2 id="See-Also"><a href="#See-Also" class="headerlink" title="See Also"></a>See Also</h2><ul>
+<li><a href="http://www.baeldung.com/java-delay-queue" target="_blank" rel="noopener">Guide to DelayQueue | Baeldung</a></li>
+<li><a href="https://stackoverflow.com/questions/48493830/what-exactly-is-the-leader-used-for-in-delayqueue" target="_blank" rel="noopener">What is Leader Used for in DelayQueue</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dancefirstthinklater.github.io/2018/01/24/Java Concurrent - CopyOnWriteArrayList/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="shibinfei">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="嘤嘤嘤">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/24/Java Concurrent - CopyOnWriteArrayList/" itemprop="url">Java Concurrent - CopyOnWriteArrayList</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-24T14:12:11+08:00">
+                2018-01-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>copy-on-write容器在计算机世界常常出现, 如果不了解可以参考<a href="http://ifeve.com/java-copy-on-write/" target="_blank" rel="noopener">Java中的Copy-On-Write容器</a>. <code>CopyOnWriteArrayList</code>特性简要概括如下:</p>
+<ul>
+<li>内存中有可能存在两个数组, 写时占用更多存储空间.</li>
+<li>写操作之间仍然是互斥的, 同一时刻仍然只有一个线程可以进行写操作.</li>
+<li>写操作进行时会先复制出一个副本出去(假设为B), 读操作仍然读取原来的数据(假设为数组A). 即在数组A上就不再存在写操作, 所以读取时不需要加锁.</li>
+</ul>
+<p>根据其特性, 可以发现读取操作如<code>size</code>,<code>get</code>,<code>indexOf</code>, 几乎和平常的列表没有任何不同.</p>
+<h3 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h3><p>在尝试实现RPC框架时, 需要使用一个列表来保存注册的Provider地址. 而Provider的数量实际上不会很大, 而且服务的上下线频率实际上非常低, 远远小于读取次数. 这种场景下正好使用<code>CopyOnWriteList</code>, 可以保证读取效率和<code>ArrayList</code>一致.  </p>
+<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h2><p><code>CopyOnWriteArrayList</code>的实现主要基于两个Java并发机制, 即<code>ReentrantLock</code>和<code>volatile</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">transient final ReentrantLock lock = new ReentrantLock();</span><br><span class="line"></span><br><span class="line">private volatile transient Object[] array;</span><br></pre></td></tr></table></figure>
+<p>前者负责为所有的写操作加锁, 后者保证修改数组引用后的可见性. 列举简单的<code>add</code>方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">        Object[] elements = getArray();</span><br><span class="line">        int len = elements.length;</span><br><span class="line">        Object[] newElements = Arrays.copyOf(elements, len + 1);</span><br><span class="line">        newElements[len] = e;    // mark -&gt;</span><br><span class="line">        setArray(newElements);  // 修改array引用.</span><br><span class="line">        return true;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在锁操作中, 复制当前数组, 最后修改array引用. 真 · copy-on-write而已. 而这里有一个本身特性带来问题, 即 <strong>此容器虽然最终一致, 但是确不是实时读写一致的</strong>.</p>
+<p>假设线程A进入了写操作<code>add</code>, 另一个线程B同时读取.</p>
+<ul>
+<li>如果A线程已经执行了<code>setArray</code>, 那么根据<code>volatile</code>变量的特性, B线程当然可见.</li>
+<li>然而由于读操作无锁, 假设A线程刚刚执行到标记<code>mark</code>的位置, 同时B线程进行读操作, 则明显读到的还是之前的数组.</li>
+</ul>
+<h2 id="happens-before"><a href="#happens-before" class="headerlink" title="happens-before"></a>happens-before</h2><h3 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h3><p>请看注释:</p>
+<blockquote>
+<p>Memory consistency effects: As with other concurrent collections, actions in a thread prior to placing an object into a CopyOnWriteArrayList happen-before actions subsequent to the access or removal of that element from the CopyOnWriteArrayList in another thread.</p>
+</blockquote>
+<p>翻译:</p>
+<p>内存一致性影响: 和其他并发集合一样, 在一个线程内, 如果某个操作在插入元素到<code>CopyOnWriteArrayList</code>之前发生, 那么此操作happpens-before于另一个线程中<code>CopyOnWriteArrayList</code>读写之后发生的操作.</p>
+<p>真绕口.. happens-before比较好理解: A操作happens-beforeB操作, 即A执行的结果对于B可见. 对于上面这句注释, 没理解的话先放下, 继续看. 这段来自 <a href="http://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html#volatile" target="_blank" rel="noopener">JSR133 FAQ</a></p>
+<h3 id="JSR133-FAQ"><a href="#JSR133-FAQ" class="headerlink" title="JSR133 FAQ"></a>JSR133 FAQ</h3><blockquote>
+<p>Under the new memory model, it is still true that volatile variables cannot be reordered with each other. The difference is that it is now no longer so easy to reorder normal field accesses around them. Writing to a volatile field has the same memory effect as a monitor release, and reading from a volatile field has the same memory effect as a monitor acquire. In effect, because the new memory model places stricter constraints on reordering of volatile field accesses with other field accesses, volatile or not, anything that was visible to thread A when it writes to volatile field f becomes visible to thread B when it reads f.</p>
+</blockquote>
+<p>翻译:</p>
+<p>在新内存模型下, 相同之处是volatile变量之间仍然不能被重排序. 而差别在于volatile变量前后的其他变量重排序不再那么简单. 对于<code>volatile</code>变量的写操作和monitor释放有相同的效果, 对于<code>volatile</code>变量的读操作也和Monitor获取有相同效果. 实际上, 由于新的内存模型对于<code>volatile</code>变量和其他变量(无论是否为volatile)的重排序更严格, 当线程A写入<code>volatile</code>变量<code>f</code>时, 而线程B在读取<code>f</code>, 那么A可见的一切对B都可见.</p>
+<p>文中举例如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class VolatileExample &#123;</span><br><span class="line">  int x = 0;</span><br><span class="line">  volatile boolean v = false;</span><br><span class="line">  public void writer() &#123;</span><br><span class="line">    x = 42;</span><br><span class="line">    v = true;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public void reader() &#123;</span><br><span class="line">    if (v == true) &#123;</span><br><span class="line">      //uses x - guaranteed to see 42.</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A线程调用<code>writer()</code>, B调用<code>reader()</code>. 由于<code>v</code>为<code>volatile</code>, 所以<code>v</code>之前的非volatile变量写操作<code>x = 42</code>对于线程B中的<code>x</code>读取一定可见.</p>
+<h3 id="set-int-index-E-element"><a href="#set-int-index-E-element" class="headerlink" title="set(int index, E element)"></a>set(int index, E element)</h3><p>在<code>CopyOnWriteArrayList</code>中的一段看似较为奇怪的代码, 就是来保证刚刚的内存一致性的.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public E set(int index, E element) &#123;</span><br><span class="line">       final ReentrantLock lock = this.lock;</span><br><span class="line">       lock.lock();</span><br><span class="line">       try &#123;</span><br><span class="line">           Object[] elements = getArray();</span><br><span class="line">           E oldValue = get(elements, index);</span><br><span class="line"></span><br><span class="line">           if (oldValue != element) &#123;</span><br><span class="line">               int len = elements.length;</span><br><span class="line">               Object[] newElements = Arrays.copyOf(elements, len);</span><br><span class="line">               newElements[index] = element;</span><br><span class="line">               setArray(newElements);</span><br><span class="line">           &#125; else &#123;</span><br><span class="line">               // Not quite a no-op; ensures volatile write semantics</span><br><span class="line">               setArray(elements);  ---&gt; 看这里</span><br><span class="line">           &#125;</span><br><span class="line">           return oldValue;</span><br><span class="line">       &#125; finally &#123;</span><br><span class="line">           lock.unlock();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>即其中标注”看这里”的位置, 它的作用和<code>VolatileExample</code>中的<code>v</code>相同, 借用<code>volatile</code>变量来保证一致性. 引用<a href="https://stackoverflow.com/questions/28772539/why-setarray-method-call-required-in-copyonwritearraylist" target="_blank" rel="noopener">stackoverflow</a>上面的一段示例, 实际上和<code>VolatileExample</code>非常相似:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// initial conditions</span><br><span class="line">int nonVolatileField = 0;</span><br><span class="line">CopyOnWriteArrayList&lt;String&gt; list = /* a single String */</span><br><span class="line"></span><br><span class="line">// Thread 1</span><br><span class="line">nonVolatileField = 1;                 // (1)</span><br><span class="line">list.set(0, &quot;x&quot;);                     // (2)</span><br><span class="line"></span><br><span class="line">// Thread 2</span><br><span class="line">String s = list.get(0);               // (3)</span><br><span class="line">if (s == &quot;x&quot;) &#123;</span><br><span class="line">    int localVar = nonVolatileField;  // (4)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>类比之下, 应该比较容易理解了. 虽然<code>nonVolatileField</code>非volatile, 但是操作(1)happens-before操作(4). 综上, <code>CopyOnWriteArrayList</code>通过<code>volatile</code>实现一种内存一致性影响.</p>
+<hr>
+<h2 id="See-Also"><a href="#See-Also" class="headerlink" title="See Also"></a>See Also</h2><ul>
+<li><a href="http://ifeve.com/java-copy-on-write/" target="_blank" rel="noopener">聊聊并发-Java中的Copy-On-Write容器 | 并发编程网 – ifeve.com</a></li>
+<li><a href="https://stackoverflow.com/questions/28772539/why-setarray-method-call-required-in-copyonwritearraylist" target="_blank" rel="noopener">Why setArray() method call required in CopyOnWriteArrayList - Stack Overflow</a></li>
+<li><a href="http://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html#volatile" target="_blank" rel="noopener">JSR-133 FAQ</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dancefirstthinklater.github.io/2018/01/05/Java Tools - jstack/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="shibinfei">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="嘤嘤嘤">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/05/Java Tools - jstack/" itemprop="url">Java Tools - jstack</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-05T14:52:41+08:00">
+                2018-01-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="1-Usage"><a href="#1-Usage" class="headerlink" title="1. Usage"></a>1. Usage</h2><p><code>jstack</code>是用来打印Stack trace的一个工具. 由JDK提供, 在<code>$JAVA_HOME/bin/</code>目录下. 对于一个Java进程来说, 可以使用<code>jps</code>, 或者<code>ps</code>命令获取进程ID. 假设进程ID为9876, 则下面的命令就可以dump出相关的线程信息:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstack 9876</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-Explanation"><a href="#2-Explanation" class="headerlink" title="2. Explanation"></a>2. Explanation</h2><p>举个栗子, 执行如下代码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class Test &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">		Thread.sleep(1000000);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查看端口 <code>jps</code>:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">13120 Test</span><br><span class="line">13122 Jps</span><br><span class="line">10674 bootloader.jar</span><br><span class="line">9042 ZooKeeperMain</span><br><span class="line">7076</span><br><span class="line">12727 Main</span><br></pre></td></tr></table></figure></p>
+<p>Dump线程信息<code>jstack 13120</code>:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.121-b13 mixed mode):</span><br><span class="line"></span><br><span class="line">&quot;Attach Listener&quot; #9 daemon prio=9 os_prio=31 tid=0x00007fe05d850000 nid=0x1007 waiting on condition [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line"></span><br><span class="line">&quot;Service Thread&quot; #8 daemon prio=9 os_prio=31 tid=0x00007fe05d042800 nid=0x4703 runnable [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line"></span><br><span class="line">&quot;C1 CompilerThread2&quot; #7 daemon prio=9 os_prio=31 tid=0x00007fe05d039800 nid=0x4503 waiting on condition [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line"></span><br><span class="line">&quot;C2 CompilerThread1&quot; #6 daemon prio=9 os_prio=31 tid=0x00007fe05d038800 nid=0x4303 waiting on condition [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line"></span><br><span class="line">&quot;C2 CompilerThread0&quot; #5 daemon prio=9 os_prio=31 tid=0x00007fe05d020000 nid=0x4103 waiting on condition [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line"></span><br><span class="line">&quot;Signal Dispatcher&quot; #4 daemon prio=9 os_prio=31 tid=0x00007fe05d01f000 nid=0x3f0b runnable [0x0000000000000000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line"></span><br><span class="line">&quot;Finalizer&quot; #3 daemon prio=8 os_prio=31 tid=0x00007fe05d012800 nid=0x3203 in Object.wait() [0x000070000ca60000]</span><br><span class="line">   java.lang.Thread.State: WAITING (on object monitor)</span><br><span class="line">	at java.lang.Object.wait(Native Method)</span><br><span class="line">	- waiting on &lt;0x0000000795588ec8&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line">	at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:143)</span><br><span class="line">	- locked &lt;0x0000000795588ec8&gt; (a java.lang.ref.ReferenceQueue$Lock)</span><br><span class="line">	at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:164)</span><br><span class="line">	at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:209)</span><br><span class="line"></span><br><span class="line">&quot;Reference Handler&quot; #2 daemon prio=10 os_prio=31 tid=0x00007fe05c822800 nid=0x3003 in Object.wait() [0x000070000c95d000]</span><br><span class="line">   java.lang.Thread.State: WAITING (on object monitor)</span><br><span class="line">	at java.lang.Object.wait(Native Method)</span><br><span class="line">	- waiting on &lt;0x0000000795586b68&gt; (a java.lang.ref.Reference$Lock)</span><br><span class="line">	at java.lang.Object.wait(Object.java:502)</span><br><span class="line">	at java.lang.ref.Reference.tryHandlePending(Reference.java:191)</span><br><span class="line">	- locked &lt;0x0000000795586b68&gt; (a java.lang.ref.Reference$Lock)</span><br><span class="line">	at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:153)</span><br><span class="line"></span><br><span class="line">&quot;main&quot; #1 prio=5 os_prio=31 tid=0x00007fe05d003800 nid=0x1a03 waiting on condition [0x000070000c34b000]</span><br><span class="line">   java.lang.Thread.State: TIMED_WAITING (sleeping)</span><br><span class="line">	at java.lang.Thread.sleep(Native Method)</span><br><span class="line">	at test.Test.main(Test.java:6)</span><br><span class="line"></span><br><span class="line">&quot;VM Thread&quot; os_prio=31 tid=0x00007fe05d809000 nid=0x2e03 runnable</span><br><span class="line"></span><br><span class="line">&quot;GC task thread#0 (ParallelGC)&quot; os_prio=31 tid=0x00007fe05c800800 nid=0x2607 runnable</span><br><span class="line"></span><br><span class="line">&quot;GC task thread#1 (ParallelGC)&quot; os_prio=31 tid=0x00007fe05c808800 nid=0x2803 runnable</span><br><span class="line"></span><br><span class="line">&quot;GC task thread#2 (ParallelGC)&quot; os_prio=31 tid=0x00007fe05c809000 nid=0x2a03 runnable</span><br><span class="line"></span><br><span class="line">&quot;GC task thread#3 (ParallelGC)&quot; os_prio=31 tid=0x00007fe05c80a000 nid=0x2c03 runnable</span><br><span class="line"></span><br><span class="line">&quot;VM Periodic Task Thread&quot; os_prio=31 tid=0x00007fe05d015000 nid=0x4903 waiting on condition</span><br><span class="line"></span><br><span class="line">JNI global references: 6</span><br></pre></td></tr></table></figure></p>
+<p>注意, JVM仅仅启动一个用户线程. 即<code>main</code>线程. 除此之外都是JVM启动的线程, 可以大致看一下方便排错时排除. 以<code>main</code>线程为例:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;main&quot; #1 prio=5 os_prio=31 tid=0x00007fe05d003800 nid=0x1a03 waiting on condition [0x000070000c34b000]</span><br><span class="line">   java.lang.Thread.State: TIMED_WAITING (sleeping)</span><br><span class="line">	at java.lang.Thread.sleep(Native Method)</span><br><span class="line">	at test.Test.main(Test.java:6)</span><br></pre></td></tr></table></figure>
+<p>可以看到都是调用的stack信息, 主要信息都在前两行.</p>
+<h3 id="2-1-Java-Thread-Name-amp-ID"><a href="#2-1-Java-Thread-Name-amp-ID" class="headerlink" title="2.1 Java Thread Name &amp; ID"></a>2.1 Java Thread Name &amp; ID</h3><p><code>&quot;main&quot; #1</code>分别表示Java线程的名称和ID. 在Java代码中可以通过<code>Thread#getName</code>, <code>Thead#getId</code>获取.</p>
+<h3 id="2-2-线程优先级"><a href="#2-2-线程优先级" class="headerlink" title="2.2 线程优先级"></a>2.2 线程优先级</h3><p><code>prio=5</code>表示线程的优先级, 即<code>Thread#getPriority</code></p>
+<h3 id="2-2-NID-amp-TID"><a href="#2-2-NID-amp-TID" class="headerlink" title="2.2 NID &amp; TID"></a>2.2 NID &amp; TID</h3><p><code>tid=0x00007fe05d003800 nid=0x1a03</code></p>
+<ul>
+<li>NID即Native thread ID, 与操作系统相关. 在Linux平台中指的是”light-weight process”. Linux下可以通过如下命令查看一个进程的线程ID:<br><code>ps -T -p $PID</code> // SPID列<br><code>top -H -p $PID</code>    // PID列</li>
+<li>TID为C++层次的线程/Java线程地址.</li>
+</ul>
+<h3 id="2-3-Thread-State"><a href="#2-3-Thread-State" class="headerlink" title="2.3 Thread State"></a>2.3 Thread State</h3><p><code>java.lang.Thread.State: TIMED_WAITING</code>: 当前线程状态, 是一个枚举类. 可以直接看注释. 只有以下几种:</p>
+<pre><code>- NEW
+- RUNNABLE
+- BLOCKED
+- WAITING
+- TIMED_WAITING
+- TERMINATED
+</code></pre><p>除了基本的状态之外还有一些更详细的描述信息<code>sleeping</code>,<code>waiting on condition [0x000070000c34b000]</code>. 如果发生死锁等事件也将在此体现.</p>
+<h2 id="3-Best-Practice"><a href="#3-Best-Practice" class="headerlink" title="3. Best Practice"></a>3. Best Practice</h2><h3 id="3-1-寻找哪里阻塞"><a href="#3-1-寻找哪里阻塞" class="headerlink" title="3.1 寻找哪里阻塞"></a>3.1 寻找哪里阻塞</h3><h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>在部署一个Web应用后, 向其发送请求, 但是一直没有响应. 最后查看Nginx日志查看上游超时了, 但是应用没有抛出异常.</p>
+<h4 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h4><p>Dump的线程信息有一条内容如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">http--2801-4$1476360005&quot; #25 daemon prio=5 os_prio=0 tid=0x00007fa884011000 nid=0x6b67 runnable [0x00007fa87f532000]</span><br><span class="line">   java.lang.Thread.State: RUNNABLE</span><br><span class="line">	at java.net.PlainSocketImpl.socketConnect(Native Method)</span><br><span class="line">	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)</span><br><span class="line">	- locked &lt;0x00000000910e2f20&gt; (a java.net.SocksSocketImpl)</span><br><span class="line">	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)</span><br><span class="line">	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)</span><br><span class="line">	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)</span><br><span class="line">	at java.net.Socket.connect(Socket.java:589)</span><br><span class="line">	at java.net.Socket.connect(Socket.java:538)</span><br><span class="line">	at sun.net.NetworkClient.doConnect(NetworkClient.java:180)</span><br><span class="line">	at sun.net.www.http.HttpClient.openServer(HttpClient.java:432)</span><br><span class="line">	at sun.net.www.http.HttpClient.openServer(HttpClient.java:527)</span><br><span class="line">	- locked &lt;0x00000000910e2e98&gt; (a sun.net.www.http.HttpClient)</span><br><span class="line">	at sun.net.www.http.HttpClient.&lt;init&gt;(HttpClient.java:211)</span><br><span class="line">	at sun.net.www.http.HttpClient.New(HttpClient.java:308)</span><br><span class="line">	at sun.net.www.http.HttpClient.New(HttpClient.java:326)</span><br><span class="line">	at sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1202)</span><br><span class="line">	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1138)</span><br><span class="line">	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1032)</span><br><span class="line">	at sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:966)</span><br><span class="line">	at sun.net.www.protocol.http.HttpURLConnection.getOutputStream0(HttpURLConnection.java:1316)</span><br><span class="line">	- locked &lt;0x00000000910e2358&gt; (a sun.net.www.protocol.http.HttpURLConnection)</span><br><span class="line">	at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java:1291)</span><br><span class="line">	- locked &lt;0x00000000910e2358&gt; (a sun.net.www.protocol.http.HttpURLConnection)</span><br><span class="line">	at com.caucho.hessian.client.HessianProxy.sendRequest(HessianProxy.java:298)</span><br><span class="line">	at com.caucho.hessian.client.HessianProxy.invoke(HessianProxy.java:166)</span><br><span class="line">	at com.sun.proxy.$Proxy45.getSimilarity(Unknown Source)</span><br><span class="line">	at com.coola.component.search.share.SearchClientNew.getSimilarity(SearchClientNew.java:78)</span><br><span class="line">	at com.zhenai.website.modules.recommend.service.impl.RecommendServiceImpl.getGuessLike(RecommendServiceImpl.java:305)</span><br><span class="line">	at com.zhenai.website.action.profile.ProfilePageAct.profileIndex(ProfilePageAct.java:524)</span><br><span class="line">	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</span><br><span class="line">	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)</span><br><span class="line">	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)</span><br><span class="line">	at java.lang.reflect.Method.invoke(Method.java:498)</span><br><span class="line">	at org.springframework.web.method.support.InvocableHandlerMethod.invoke(InvocableHandlerMethod.java:215)</span><br><span class="line">	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:132)</span><br><span class="line">	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:104)</span><br><span class="line">	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandleMethod(RequestMappingHandlerAdapter.java:745)</span><br><span class="line">	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:685)</span><br><span class="line">	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:80)</span><br><span class="line">	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:919)</span><br><span class="line">	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:851)</span><br><span class="line">	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:953)</span><br><span class="line">	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:844)</span><br><span class="line">	at javax.servlet.http.HttpServlet.service(HttpServlet.java:118)</span><br><span class="line">	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:829)</span><br><span class="line">	at javax.servlet.http.HttpServlet.service(HttpServlet.java:95)</span><br><span class="line">	at com.caucho.server.dispatch.ServletFilterChain.doFilter(ServletFilterChain.java:103)</span><br><span class="line">	at com.zhenai.website.common.web.interceptor.OfflineFilter.doFilter(OfflineFilter.java:141)</span><br><span class="line">	at com.caucho.server.dispatch.FilterFilterChain.doFilter(FilterFilterChain.java:87)</span><br><span class="line">	at com.zhenai.commons.web.filter.SidFilter.doFilter(SidFilter.java:77)</span><br><span class="line">	at com.caucho.server.dispatch.FilterFilterChain.doFilter(FilterFilterChain.java:87)</span><br><span class="line">	at com.zhenai.commons.web.filter.XssFilter.doFilter(XssFilter.java:58)</span><br><span class="line">	at com.caucho.server.dispatch.FilterFilterChain.doFilter(FilterFilterChain.java:87)</span><br><span class="line">	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:88)</span><br><span class="line">	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:106)</span><br><span class="line">	at com.caucho.server.dispatch.FilterFilterChain.doFilter(FilterFilterChain.java:87)</span><br><span class="line">	at com.zhenai.commons.web.filter.IpBlackFilter.doFilter(IpBlackFilter.java:69)</span><br><span class="line">	at com.caucho.server.dispatch.FilterFilterChain.doFilter(FilterFilterChain.java:87)</span><br><span class="line">	at com.caucho.server.webapp.WebAppFilterChain.doFilter(WebAppFilterChain.java:187)</span><br><span class="line">	at com.caucho.server.dispatch.ServletInvocation.service(ServletInvocation.java:265)</span><br><span class="line">	at com.caucho.server.http.HttpRequest.handleRequest(HttpRequest.java:273)</span><br><span class="line">	at com.caucho.server.port.TcpConnection.run(TcpConnection.java:682)</span><br><span class="line">	- locked &lt;0x00000000b5d04cd8&gt; (a java.lang.Object)</span><br><span class="line">	at com.caucho.util.ThreadPool$Item.runTasks(ThreadPool.java:743)</span><br><span class="line">	at com.caucho.util.ThreadPool$Item.run(ThreadPool.java:662)</span><br><span class="line">	at java.lang.Thread.run(Thread.java:745)</span><br></pre></td></tr></table></figure></p>
+<p>可以很容易看出来, 是某个Http请求阻塞了.:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">at com.coola.component.search.share.SearchClientNew.getSimilarity(SearchClientNew.java:78)</span><br></pre></td></tr></table></figure></p>
+<p>原因是调用其他部门提供的Http接口连接不上.</p>
+<p>有同事分享了一个相似的场景:<br>API调用Dubbo超时, 查看Dubbo日志发现线程池占满了. 查看线程信息后发现原因也是一个没有设置超时的HTTP请求阻塞.  </p>
+<h3 id="3-2-查看CPU占用最高的线程-Linux"><a href="#3-2-查看CPU占用最高的线程-Linux" class="headerlink" title="3.2 查看CPU占用最高的线程(Linux)"></a>3.2 查看CPU占用最高的线程(Linux)</h3><p>输入<code>top</code>命令后按照CPU占用排序.</p>
+<ul>
+<li>Linux上是输入大写P.</li>
+<li>Mac上是输入o, 再输入cpu后按enter键</li>
+</ul>
+<p><img src="http://7xokux.com1.z0.glb.clouddn.com/top.jpeg" alt=""></p>
+<p>PID为1707. 继续查看CPU占用最大的线程, <code>top -H -p 1707</code>. 结果如下:</p>
+<p><img src="http://7xokux.com1.z0.glb.clouddn.com/top-h.jpeg" alt=""></p>
+<p>查看线程ID为1751对应的Java线程. 上文提到过, 这个线程对应的是结果中的NID. 但是<code>top</code>显示的是10进制, 而<code>stack</code>是16进制的. 1751的十六进制格式为0x6d7. 可以通过<code>jstack</code>查看对应的Java线程 <code>jstack 1707 | grep 0x6d7</code>即可看到是哪些Java代码造成的了:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;ReputMessageService&quot; #33 prio=5 os_prio=0 tid=0x00007ffb60743fa0 nid=0x6d7 waiting on condition [0x00007ffa6ddfa000]</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="See-Also"><a href="#See-Also" class="headerlink" title="See Also"></a>See Also</h2><ul>
+<li><a href="https://docs.oracle.com/javase/7/docs/technotes/tools/share/jstack.html" target="_blank" rel="noopener"><code>jstack</code> - Java SE Documetation</a></li>
+<li><a href="https://gist.github.com/rednaxelafx/843622" target="_blank" rel="noopener">Find out the correspondence between the tid/nid of Java threads as shown from jstack/JMX, on HotSpot/Linux · R大 - GitHub</a></li>
+<li><a href="https://dzone.com/articles/how-analyze-java-thread-dumps" target="_blank" rel="noopener">How to Analyze Java Thread Dumps - DZone Performance</a></li>
+<li><a href="http://www.linuxidc.com/Linux/2015-06/118868.htm" target="_blank" rel="noopener">Linux上如何查看某个进程的线程_Linux公社</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dancefirstthinklater.github.io/2017/11/24/Java Concurrent - ThreadPoolExecutor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="shibinfei">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="嘤嘤嘤">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/24/Java Concurrent - ThreadPoolExecutor/" itemprop="url">Java Concurrent - ThreadPoolExecutor特性&实现</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-24T18:48:54+08:00">
+                2017-11-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="1-为什么要使用线程池"><a href="#1-为什么要使用线程池" class="headerlink" title="1. 为什么要使用线程池?"></a>1. 为什么要使用线程池?</h2><p>这点在注释最开始说的很清楚:</p>
+<blockquote>
+<p> Thread pools address two different problems</p>
+<ol>
+<li>they usually provide improved performance when executing large numbers of asynchronous tasks, due to reduced per-task invocation overhead,</li>
+<li>and they provide a means of bounding and managing the resources, including threads, consumed when executing a collection of tasks.</li>
+</ol>
+</blockquote>
+<p>其中第一点也可以这样简单描述:</p>
+<blockquote>
+<p>Reusing threads that have already been created instead of creating new ones (an expensive process)<br><a href="https://stackoverflow.com/questions/230003/thread-vs-threadpool" target="_blank" rel="noopener">Answer from Thread vs ThreadPool on Stackoverflow</a></p>
+</blockquote>
+<h2 id="2-Worst-pool"><a href="#2-Worst-pool" class="headerlink" title="2. Worst pool"></a>2. Worst pool</h2><p>在一切开始之前, 先思考一个问题: 仅就”重用线程”这个首要目标来说, 该如何实现一个线程池? 比较明确的几点是:</p>
+<pre><code>1. 一定创建固定数目的`Thread`, 任务由`Runnable`形式交给`Thread`执行.
+2. 根据线程的生命周期, 一个线程执行完成即进入 *Dead* 状态, 由此可知`Thread`不能停, 需要一直维持 *Running* 状态. 也就是说, 需要在其中执行一个”死循环”.
+</code></pre><p>于是最开始想到是这样的写法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class PoolThread &#123;</span><br><span class="line">	private Thread thread;</span><br><span class="line">	private Runnable task;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样实现需要在每个新任务到来时遍历<code>PoolThread</code>, 判断其工作状态从而决定是否将任务提交给他. 而且弹性比较差, 当所有线程空闲时, 新任务无法处理.<br>这里提前剧透, 看了<code>ThreadPoolExecutor</code>的实现, 是引入了一个生产-消费模型, <code>Runnable</code>直接进入队列(实际上有的并不是, 后面再提), 而Thread从队列中消费.<br>有了这些信息, 已经可以写出一个辣鸡队列了, 姑且称之为<code>WorstPool</code>. 代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">import java.util.concurrent.BlockingQueue;</span><br><span class="line">import java.util.concurrent.TimeUnit;</span><br><span class="line">import java.util.stream.IntStream;</span><br><span class="line">import com.google.common.collect.Queues;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @author shibinfei</span><br><span class="line"> */</span><br><span class="line">public class WorstPool &#123;</span><br><span class="line"></span><br><span class="line">    private BlockingQueue&lt;Runnable&gt; taskQueue = Queues.newArrayBlockingQueue(5);</span><br><span class="line"></span><br><span class="line">    public WorstPool(int poolSize) &#123;</span><br><span class="line">        IntStream.range(0, poolSize).forEach(x -&gt; createThreadAndRun());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void createThreadAndRun() &#123;</span><br><span class="line">        Thread thread = new Thread(() -&gt; &#123;</span><br><span class="line">            while (true) &#123;</span><br><span class="line">                Runnable cmd;</span><br><span class="line">                try &#123;</span><br><span class="line">                    cmd = taskQueue.take(); // keep waiting</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    continue; // ...</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                cmd.run();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        thread.start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void execute(Runnable cmd) &#123;</span><br><span class="line">        taskQueue.add(cmd); // 满了就抛出异常</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    WorstPool pool = new WorstPool(2);</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; 6; i++) &#123;</span><br><span class="line">        final int id = i;</span><br><span class="line">        pool.execute(() -&gt; &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                TimeUnit.SECONDS.sleep(2);</span><br><span class="line">            &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(Thread.currentThread().getName() + &quot; DONE WITH &quot; + id);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以运行下看看结果~</p>
+<h2 id="3-ThreadPoolExecutor"><a href="#3-ThreadPoolExecutor" class="headerlink" title="3. ThreadPoolExecutor"></a>3. ThreadPoolExecutor</h2><p><code>ThreadPoolExecutor</code>和<code>WorstPool</code>的主要模型是一致的. 了解后者之后, <code>ThreadPoolExecutor</code>就比较容易切入. 先尝试将<code>WorstPool</code>的成员对应到<code>ThreadPoolExecutor</code>.  之后再根据<code>ThreadPoolExecutor</code>的各种特性逐个了解.</p>
+<h3 id="3-1-找相同-Worker-amp-BlockingQueue"><a href="#3-1-找相同-Worker-amp-BlockingQueue" class="headerlink" title="3.1 找相同 - Worker &amp; BlockingQueue"></a>3.1 找相同 - Worker &amp; BlockingQueue</h3><p>观察<code>ThreadPoolExecutor</code>的类成员, 可以很容易找到和<code>WorstPool</code>的对应.</p>
+<pre><code>- `BlockingQueue&lt;Runnable&gt; workQueue` - `taskQueue` in `WorstPool`
+- 包含一个`Thread`成员的内部类`Worker` - `WorstPool`中没有做封装, 直接是一个`Thread`
+</code></pre><h4 id="3-1-1-Worker"><a href="#3-1-1-Worker" class="headerlink" title="3.1.1 Worker"></a>3.1.1 Worker</h4><p><code>Worker</code>成员较少, 可以先关注下面几个</p>
+<pre><code>- `Thread thread`, 用来执行任务的线程
+- `Runnable task`,  在创建`Worker`会同时为其指定一个任务. 后续的任务将从队列中获取.
+</code></pre><p>在<code>ThreadPoolExecutor</code>中,  <code>Worker</code>不是在线程池初始化时创建的. 而是在提交任务时创建的, 即在客户端调用入口<code>execute(Runnable cmd)</code>方法中. <code>Worker</code>的创建以及执行任务流程大致如下:</p>
+<p><img src="http://7xokux.com1.z0.glb.clouddn.com/threadpool-worker-creation-and-run-task.png" alt=""></p>
+<p><code>addWorker</code>方法中, <code>Worker</code>实例会被加入到<code>HashSet&lt;Worker&gt; workers</code>. 用于线程池管理所有的<code>Worker</code>.</p>
+<h4 id="Worker数量"><a href="#Worker数量" class="headerlink" title="Worker数量"></a>Worker数量</h4><p><code>Worker</code>数量可能不是固定的, 在<code>execute()</code>中, 判断是否需要新建<code>worker</code>主要看<code>corePoolSize</code>和<code>maximumPoolSize</code>. 注释讲的很清楚:</p>
+<blockquote>
+<p>A ThreadPoolExecutor will automatically adjust the pool size according to the bounds set by corePoolSize and maximumPoolSize.<br>When a new task is submitted in method  execute, and fewer than corePoolSize threads are running, a new thread is created to handle the request, even if other worker threads are idle.  If there are more than corePoolSize but less than maximumPoolSize threads running, a new thread will be created only if the queue is full.</p>
+</blockquote>
+<h4 id="AbstractQueuedSynchronizer"><a href="#AbstractQueuedSynchronizer" class="headerlink" title="AbstractQueuedSynchronizer"></a>AbstractQueuedSynchronizer</h4><p><code>Worker</code>本身继承了<code>AbstractQueuedSynchronizer</code>, 相关方法有<code>lock()</code>, <code>tryLock()</code>,<code>isLocked()</code>,<code>unlock()</code>.  等后续单独介绍<code>AbstractQueuedSynchronizer</code>, 暂时可以简单理解为, 内部维护了一个<code>ReentrantLock</code>实例. 具体使用后面会提到~</p>
+<h4 id="Key-Words"><a href="#Key-Words" class="headerlink" title="Key Words"></a>Key Words</h4><p><em>Worker</em> <em>workQueue</em> <em>corePoolSize</em> <em>maximumPoolSize</em> <em> AbstractQueuedSynchronizer</em> <em>thread</em> <em>workers</em></p>
+<h3 id="3-2-ctl"><a href="#3-2-ctl" class="headerlink" title="3.2 ctl"></a>3.2 ctl</h3><p><code>ThreadPoolExecutor</code>中有一个乍看起来有些令人困惑的成员 - <code>AtomicInteger ctl</code></p>
+<blockquote>
+<p>The main pool control state, ctl, is an atomic integer packing two conceptual fields: workerCount, runState.<br>实际上一些相关的位操作只是为了将两个变量封装到一个中: 高三位表示<code>runState</code>. 剩下的表示<code>workCount</code></p>
+</blockquote>
+<h4 id="WorkerCount"><a href="#WorkerCount" class="headerlink" title="WorkerCount"></a>WorkerCount</h4><p><code>workerCount</code>可以先简单地根据字面理解为<code>Worker</code>数量, 实际上却不大精准:</p>
+<blockquote>
+<p>The workerCount is the number of workers that have been permitted to start and not permitted to stop.<br>// TODO</p>
+</blockquote>
+<p><code>workerCountOf</code>, <code>ctlOf</code>等几个方法都是很简单的二进制操作, 下面详细说明.</p>
+<h4 id="Bit操作详细说明"><a href="#Bit操作详细说明" class="headerlink" title="Bit操作详细说明"></a>Bit操作详细说明</h4><p>这里必须上源码了:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int CAPACITY   = (1 &lt;&lt; (Integer.SIZE - 3)) - 1;</span><br><span class="line"></span><br><span class="line">// Packing and unpacking ctl</span><br><span class="line">private static int runStateOf(int c)     &#123; return c &amp; ~CAPACITY; &#125;</span><br><span class="line">private static int workerCountOf(int c)  &#123; return c &amp; CAPACITY; &#125;</span><br><span class="line">private static int ctlOf(int rs, int wc) &#123; return rs | wc; &#125;</span><br></pre></td></tr></table></figure>
+<p><code>CAPACITY</code>为<code>1</code>左移29位. 它的二进制表示为:<br>    0001 1111 1111 1111 1111 1111 1111 1111<br><code>~CAPACITY</code><br>    1110 0000 0000 0000 0000 0000 0000 0000</p>
+<p>这样看就很好理解了. 两者一个是高位为1, 一个是低位为1, 这样在按位与操作时就会忽略其他为0的Bit, 达到封装两个值的效果. 可以看出<code>workerCount</code>的长度受限于29个bit, 最大为 (2 ^ 29) - 1. 而<code>runState</code>只有6种可能取值, 3位也够了.</p>
+<h4 id="KeyWords"><a href="#KeyWords" class="headerlink" title="KeyWords"></a>KeyWords</h4><p><em>ctl</em> <em>workerCount</em> <em>runState</em></p>
+<h3 id="3-3-生命周期"><a href="#3-3-生命周期" class="headerlink" title="3.3 生命周期"></a>3.3 生命周期</h3><p>上文提到 <code>ctl</code>包装的另一个值就是<code>runState</code>. 它的作用是用来表示整个线程池的生命周期状态, 取值有如下几种:</p>
+<blockquote>
+<p>The runState provides the main lifecyle control, taking on values:</p>
+<pre><code>   - RUNNING:  Accept new tasks and process queued tasks
+- SHUTDOWN: Don&apos;t accept new tasks, but process queued tasks
+- STOP:     Don&apos;t accept new tasks, don&apos;t process queued tasks, and interrupt in-progress tasks
+- TIDYING:  All tasks have terminated, workerCount is zero, the thread transitioning to state      TIDYING will run the terminated() hook method
+- TERMINATED: terminated() has completed
+</code></pre></blockquote>
+<p> 下面几个方法都是对<code>runState</code>简单的读写操作, 几乎可以根据名称判断用处</p>
+<ul>
+<li><code>runStateLessThan(int c, int s)</code></li>
+<li><code>runStateAtLeast(int c, int s)</code></li>
+<li><code>isTerminated()</code></li>
+<li><code>isTerminating()</code></li>
+<li><code>isShutdown()</code></li>
+<li><code>isRunning(int c)    // 是否处于RUNNING状态</code></li>
+<li><code>advanceRunState(int target)  // 将runState设置为目标值</code></li>
+</ul>
+<p>各种状态的转换说明如下:</p>
+<blockquote>
+<p>The runState monotonically increases over time, <strong>but need not hit each state</strong>. The transitions are:</p>
+<pre><code>- RUNNING -&gt; SHUTDOWN: On invocation of shutdown(), perhaps implicitly in finalize()
+- (RUNNING or SHUTDOWN) -&gt; STOP: On invocation of shutdownNow()
+* SHUTDOWN -&gt; TIDYING:  When both queue and pool are empty
+* STOP -&gt; TIDYING:  When pool is empty
+    * TIDYING -&gt; TERMINATED: When the terminated() hook method has completed
+</code></pre></blockquote>
+<p>可以看出来, 线程池初始化之后, 如果不调用<code>shutdown</code>, <code>shutdownNow</code>它是一直处于RUNNING状态的, 所以 <strong>生命周期的变化都始于这两个方法</strong>; 他们的作用都是试图停止线程池, 但是细节有所不同.</p>
+<h4 id="showdown"><a href="#showdown" class="headerlink" title="showdown"></a>showdown</h4><p>此操作调用之前提交的任务(即包含队列中的任务)都会被执行完, 但是不再接受新任务.  另外此方法的注释中提到: (<code>shutdownNow</code>也是如此)</p>
+<blockquote>
+<p>This method does not wait for previously submitted tasks to complete execution.  Use awaitTermination awaitTermination<br>这句的意思是, <code>shutdown</code>并不会阻塞当前线程, 从而等待所有任务执行完. 如果需要的话, 使用<code>awaitTermination</code>. 下面的代码可以说明这一点:</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ThreadPoolExecutor pool = new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, Queues.newArrayBlockingQueue(1));</span><br><span class="line">        pool.execute(() -&gt; &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + &quot; in&quot;);</span><br><span class="line">                TimeUnit.SECONDS.sleep(2);</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + &quot; out&quot;);</span><br><span class="line">            &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + &quot; interrupted&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        pool.shutdown();</span><br><span class="line">        System.out.println(&quot;ShutDown OK&quot;);</span><br></pre></td></tr></table></figure>
+<p>这里的”ShutDown OK”马上就打印了, 但是线程池中的任务还没有完成.</p>
+<p><code>awaitTermination</code>的实现是通过一个<code>Condition termination</code>成员的<code>await</code>来实现的, 逻辑比较简单, 其中根据<code>runState</code>是否达到<code>TERMINATED</code>状态决定是否继续<code>await</code>.  通常有<code>await</code>就会有<code>signal</code>, 在后面会提到.</p>
+<h4 id="shutdownNow"><a href="#shutdownNow" class="headerlink" title="shutdownNow"></a>shutdownNow</h4><p>此方法试图终止当前运行的任务, 并将队列中的任务全部移除. 由于试图终止的方式为<code>interrupt</code>, 所以实际上并不能保证一定成功.</p>
+<h4 id="shutdown-amp-shutdownNow"><a href="#shutdown-amp-shutdownNow" class="headerlink" title="shutdown &amp; shutdownNow"></a>shutdown &amp; shutdownNow</h4><p>来看一下两个方法的主要内容:<br><img src="http://7xokux.com1.z0.glb.clouddn.com/ThreadPoolExecutor-shutdown.png" alt=""></p>
+<ol>
+<li><code>advanceRunState(state)</code><br>这里两个都有调用, 只不过目标值不同. 逻辑也仅仅为修改状态而已.  </li>
+<li><code>interruptIdleWorkers</code> vs  <code>interruptWorkers</code>:<br>两者都是试图对进行中的worker thread进行<code>interrupt</code>. 不同的是,  前者会先调用<code>tryLock()</code>.  而在<code>runWorker</code>的循环中, 每次执行task会先调用<code>worker.lock()</code>, 结束才后<code>unlock</code>. 所以说非空闲的任务不会受到影响.</li>
+<li><code>onShutdown</code><br>留给子类的一个钩子, 学习<code>ScheduledThreadPoolExecutor</code>再关注</li>
+<li><code>drainQueue</code><br>将队列中的元素抽取到另一个List中, 并移除此元素.</li>
+<li><code>tryTerminate</code><br>两者都有调用. 具体说明之前先回顾一下前面的<code>runState</code>转换:<ul>
+<li>SHUTDOWN -&gt; TIDYING:  When both queue and pool are empty</li>
+<li>STOP -&gt; TIDYING:  When pool is empty<br>这个转换过程即为<code>tryTerminate</code>做的事情.</li>
+</ul>
+</li>
+</ol>
+<p>查看<code>tryTerminate()</code>, 其中值得注意的是, 当为<code>SHUTDOWN</code>状态, 且队列不为空时, <code>tryTerminate</code>方法是直接<code>return</code>的.  而在<code>showdown</code>过程中, 很可能正好处于这种情况, 此时<code>shutdown</code>对<code>tryTerminate</code>的调用是无效的. 但是在后续, <code>tryTerminate</code>方法还会被调用一次, 即前面提到的<code>processWorkerExit</code></p>
+<p>所以一个<code>ThreadPoolExecutor</code>的生命周期转换以及触发操作如下:<br>RUNNING (shutdown) -&gt; SHUTDOWN -&gt; TIDYING(tryTerminate) -&gt; TERMINATED<br>RUNNING (shutdownNow) -&gt; STOP -&gt; TIDYING(tryTerminate)  -&gt; TERMINATED</p>
+<ol>
+<li><code>RuntimePermission</code></li>
+</ol>
+<h3 id="3-4-Reject策略"><a href="#3-4-Reject策略" class="headerlink" title="3.4 Reject策略"></a>3.4 Reject策略</h3><p>回想<code>workerCount</code>策略:</p>
+<ul>
+<li>当<code>workerCount</code>小于<code>corePoolSize</code>, 有新任务会会创建<code>Worker</code>.</li>
+<li>如果达到了<code>corePoolSize</code>, 会将任务放到队列中.</li>
+<li>如果队列放不下了, 会尝试继续创建<code>Worker</code></li>
+</ul>
+<p>还有一点:</p>
+<ul>
+<li>如果<code>workerCount</code>即将超过<code>maximumPoolSize</code>, 那么将对对应的task执行Reject策略.</li>
+</ul>
+<p>这个策略的抽象即为<code>RejectedExecutionHandler#rejectedExecution(Runnable r, ThreadPoolExecutor executor)</code>.</p>
+<p>四种预定义策略比较简单:</p>
+<ol>
+<li><code>AbortPolicy</code>(默认). 抛出一个异常(<code>RejectedExecutionException</code>)</li>
+<li><code>CallerRunsPolicy</code>. 将提交的Task直接还给主线程同步执行.</li>
+<li><code>DiscardPolicy</code>. 非常简单, 直接放弃治疗</li>
+<li><code>DiscardOldestPolicy</code>.  抛弃队列头的任务, 重试执行.</li>
+</ol>
+<h3 id="3-5-KeepAliveTime-amp-allowCoreThreadTimeOut"><a href="#3-5-KeepAliveTime-amp-allowCoreThreadTimeOut" class="headerlink" title="3.5 KeepAliveTime &amp; allowCoreThreadTimeOut"></a>3.5 KeepAliveTime &amp; allowCoreThreadTimeOut</h3><p>通过两个参数<code>corePoolSize</code>, <code>maximumPoolSize</code>来控制Worker数量, 目标为使线程池更具有弹性, 保证一段时间内的任务量骤增也可以承受. 而下面则关于任务量从峰值降下来后, 如何减少线程池Worker数量, 从而减少资源占用.</p>
+<p>默认情况下,  当Worker数量超过了corePoolSize之后, 且有Worker空闲了一段时间, 会有部分Worker被回收, 但是数量不会小于corePoolSize.  </p>
+<p>举个栗子, 假设<code>corePoolSize == 5, maximumPoolSize == 10;</code>. 之前任务很多, 所以创建了10个Worker, 而此时任务被处理完. 对于超过<code>corePoolSize</code>数量的线程, 如果空闲时间超过了<code>keepAliveTime</code>, 则会被回收.</p>
+<p>默认情况下, 即便回收也是会保证活跃线程数量 <code>&gt;= corePoolSize</code>的. 如果想打破这里逻辑, 可以设置<code>alloCoreThreadTimeOut</code>为<code>true</code>.  </p>
+<p>对于超时时间的控制, 在<code>getTask()</code>中, 且仍然基于阻塞队列的特性:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">boolean timed = allowCoreThreadTimeOut || wc &gt; corePoolSize;</span><br><span class="line">// ...</span><br><span class="line">Runnable r = timed ?</span><br><span class="line">		workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :</span><br><span class="line">         workQueue.take();</span><br><span class="line">timedOut = true;</span><br></pre></td></tr></table></figure>
+<p>正常情况下, 使用<code>take()</code>会一直阻塞在这里, 而符合超时判断条件时, 则最多等<code>keepAliveTime</code>纳秒. 没有取到任务则<code>timeOut</code>则被置为<code>true</code>, 下次循环中会<code>return null</code>, 则对应的worker就结束了.(参考前文流程图) .</p>
+<p>可以通过以下代码debug<code>getTask()</code>方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ThreadPoolExecutor pool = new ThreadPoolExecutor(1, 2, 1, TimeUnit.SECONDS, Queues.newArrayBlockingQueue(1));</span><br><span class="line">        pool.setKeepAliveTime(3, TimeUnit.SECONDS);</span><br><span class="line"></span><br><span class="line">        for (int i = 0; i &lt; 3; i++) &#123;</span><br><span class="line">            pool.execute(() -&gt; &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName());</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></p>
+<p>前三个任务, 两个直接交给了<code>Worker</code>, 一个从队列中消费, 所以<code>getTask()</code>的第一次调用可以忽略. 可以直接从第二次调用跟踪.</p>
+<h2 id="4-整体概念回顾"><a href="#4-整体概念回顾" class="headerlink" title="4. 整体概念回顾"></a>4. 整体概念回顾</h2><p><img src="http://7xokux.com1.z0.glb.clouddn.com/ThreadPoolExecutor-Members.png" alt=""></p>
+<h2 id="5-Best-Practice"><a href="#5-Best-Practice" class="headerlink" title="5. Best Practice"></a>5. Best Practice</h2><h3 id="5-1-线程池大小应该设置多少合适"><a href="#5-1-线程池大小应该设置多少合适" class="headerlink" title="5. 1 线程池大小应该设置多少合适"></a>5. 1 线程池大小应该设置多少合适</h3><h4 id="先给一个粗糙的结论"><a href="#先给一个粗糙的结论" class="headerlink" title="先给一个粗糙的结论"></a>先给一个粗糙的结论</h4><pre><code>取决于程序为CPU密集/IO密集. 如果接近完全为CPU密集的程序, 线程数应设置为CPU内核数量. IO密集则需要增加线程数.
+IO密集/CPU密集无法量化, 所以需要通过测试来决定.
+// TODO 如何进行测试
+</code></pre>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+  </section>
+
+  
+
+
+          </div>
+          
+
+
+          
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">shibinfei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">shibinfei</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
