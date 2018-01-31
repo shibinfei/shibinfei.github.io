@@ -332,16 +332,7 @@
       
         
           
-          1. Overview之前提到过, ThreadPoolExecutor的内部类Worker维护了一个非常基本的锁结构. 方法不多, 可以由名知义:
-- lock
-- tryLock
-- unlock
-- isLocked
-Worker本身继承了AbstractQueuedSynchronizer(AQS)来实现上述的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们先从这些并发工具中最简单的Worker开始, 之后逐步递进:
-- ThreadPoolExecutor#Worker
-- CountDownLatch
-- Semaphore
-- FutureTask (
+          1. Overview之前提到过, ThreadPoolExecutor的内部类Worker维护了一个非常基本的锁结构.
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -490,15 +481,7 @@ Worker本身继承了AbstractQueuedSynchronizer(AQS)来实现上述的. 事实�
         
           
           Foreword
-阅读前需要了解DelayQueue的基本使用. 可以参考 Guide to DelayQueue | Baeldung
-
-SimpleDelayQueueDelayQueue的基本思想很简单:
-
-内部容器为一个优先队列, 优先条件为出队列时间. 即应该出队列的时间越早越优先.
-通过Condition#awaitNanos来实现时间上的延迟. 举例, 假设队列中只有一个元素, 需要延迟1秒. 那么试图获取此元素的线程就需要await(1, TimeUnit.SECONDS)
-
-DelayQueue的成员非常少, 都列在下方. 其中的leader可以暂时忽略.
-1234567pr
+阅读前需要了解DelayQueue的基本使用. 可以参考 Guide to DelayQueue | 
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -646,14 +629,7 @@ DelayQueue的成员非常少, 都列在下方. 其中的leader可以暂时忽略
       
         
           
-          Overviewcopy-on-write容器在计算机世界常常出现, 如果不了解可以参考Java中的Copy-On-Write容器. CopyOnWriteArrayList特性简要概括如下:
-
-内存中有可能存在两个数组, 写时占用更多存储空间.
-写操作之间仍然是互斥的, 同一时刻仍然只有一个线程可以进行写操作.
-写操作进行时会先复制出一个副本出去(假设为B), 读操作仍然读取原来的数据(假设为数组A). 即在数组A上就不再存在写操作, 所以读取时不需要加锁.
-
-根据其特性, 可以发现读取操作如size,get,indexOf, 几乎和平常的列表没有任何不同.
-实际应用在尝试实现RPC框架时,
+          Overviewcopy-on-write容器在计算机世界常常出现, 如果不了解可以参考Java中的Copy-On-Wr
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -801,8 +777,7 @@ DelayQueue的成员非常少, 都列在下方. 其中的leader可以暂时忽略
       
         
           
-          1. Usagejstack是用来打印Stack trace的一个工具. 由JDK提供, 在$JAVA_HOME/bin/目录下. 对于一个Java进程来说, 可以使用jps, 或者ps命令获取进程ID. 假设进程ID为9876, 则下面的命令就可以dump出相关的线程信息:1jstack 9876
-2. Explanation举个栗子, 执行如下代码:1234567public class Test &#123;	public static void main(String[] args) throws InterruptedException &#123;		Thread.sleep(10
+          1. Usagejstack是用来打印Stack trace的一个工具. 由JDK提供, 在$JAVA_HOME/bin
           ...
           <!--noindex-->
           <div class="post-button text-center">
@@ -952,10 +927,7 @@ DelayQueue的成员非常少, 都列在下方. 其中的leader可以暂时忽略
           
           1. 为什么要使用线程池?这点在注释最开始说的很清楚:
 
- Thread pools address two different problems
-
-they usually provide improved performance when executing large numbers of asynchronous tasks, due to reduced per-task invocation overhead,
-and they provide a means of bounding and managing the resources, including threads, co
+ Thread pools address two diffe
           ...
           <!--noindex-->
           <div class="post-button text-center">
