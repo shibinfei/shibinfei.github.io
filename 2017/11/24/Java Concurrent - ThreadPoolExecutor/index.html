@@ -564,17 +564,8 @@ IO密集/CPU密集无法量化, 所以需要通过测试来决定.
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -652,22 +643,6 @@ IO密集/CPU密集无法量化, 所以需要通过测试来决定.
       </section>
 
       
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-为什么要使用线程池"><span class="nav-text">1. 为什么要使用线程池?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Worst-pool"><span class="nav-text">2. Worst pool</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-ThreadPoolExecutor"><span class="nav-text">3. ThreadPoolExecutor</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-找相同-Worker-amp-BlockingQueue"><span class="nav-text">3.1 找相同 - Worker &amp; BlockingQueue</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-1-Worker"><span class="nav-text">3.1.1 Worker</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Worker数量"><span class="nav-text">Worker数量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AbstractQueuedSynchronizer"><span class="nav-text">AbstractQueuedSynchronizer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Key-Words"><span class="nav-text">Key Words</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-ctl"><span class="nav-text">3.2 ctl</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#WorkerCount"><span class="nav-text">WorkerCount</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bit操作详细说明"><span class="nav-text">Bit操作详细说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KeyWords"><span class="nav-text">KeyWords</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-生命周期"><span class="nav-text">3.3 生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#showdown"><span class="nav-text">showdown</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shutdownNow"><span class="nav-text">shutdownNow</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shutdown-amp-shutdownNow"><span class="nav-text">shutdown &amp; shutdownNow</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-Reject策略"><span class="nav-text">3.4 Reject策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-KeepAliveTime-amp-allowCoreThreadTimeOut"><span class="nav-text">3.5 KeepAliveTime &amp; allowCoreThreadTimeOut</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-整体概念回顾"><span class="nav-text">4. 整体概念回顾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Best-Practice"><span class="nav-text">5. Best Practice</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-线程池大小应该设置多少合适"><span class="nav-text">5. 1 线程池大小应该设置多少合适</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#先给一个粗糙的结论"><span class="nav-text">先给一个粗糙的结论</span></a></li></ol></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
 
       
 
@@ -691,15 +666,9 @@ IO密集/CPU密集无法量化, 所以需要通过测试来决定.
 </div>
 
 
-  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
 
 
 
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
 
 
 
