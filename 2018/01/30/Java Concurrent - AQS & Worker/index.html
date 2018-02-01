@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://7xokux.com1.z0.glb.clouddn.com/TheadPoolExecutor-Worker-tryLock.png">
 <meta property="og:image" content="http://7xokux.com1.z0.glb.clouddn.com/ThreadPoolExecutor-Worker%23Lock.png">
 <meta property="og:image" content="http://7xokux.com1.z0.glb.clouddn.com/WorkerLockExample.png">
-<meta property="og:updated_time" content="2018-02-01T03:25:51.208Z">
+<meta property="og:updated_time" content="2018-02-01T03:27:39.582Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java Concurrent - AQS &amp; Worker">
 <meta name="twitter:description" content="1. Overview之前提到过, ThreadPoolExecutor的内部类Worker维护了一个非常基本的锁结构. 方法不多, 可以由名知义: - lock - tryLock - unlock - isLocked Worker本身继承了AbstractQueuedSynchronizer(AQS)来实现上述功能的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们">
@@ -399,7 +399,7 @@
 <li>在循环中, 每个task执行前后<code>lock</code>, <code>unlock</code></li>
 <li><code>interruptIdleWorkers</code>前后<code>tryLock</code>, <code>unlock</code></li>
 </ol>
-<p>第1, 2点注释也有说明, 1是为了禁止被<code>interrupt</code>, 2是允许<code>interrupt</code>.  而且由于第一点的存在, 如果当做普通锁, 上了就<code>lock()</code>的话, 是会一直阻塞的, 所以前面把初始状态设置为0.</p>
+<p>第1, 2点注释也有说明, 1是为了禁止被<code>interrupt</code>, 2是允许<code>interrupt</code>.  而且由于第一点的存在, 如果当做普通锁, 上来就<code>lock()</code>的话, 是会一直阻塞的, 所以前面把初始状态设置为0.</p>
 <p>在大部分情况下, Woker这个同步工具并没有涉及到多线程间通信, 它只被线程池中的线程持有. 而当主线程试图<code>interrupt</code>线程池中线程时, 才有多个线程对锁的争用.  <code>ThreadPoolExecutor</code>中</p>
 <ul>
 <li><code>shutdown</code>中会调用<code>interruptIdleWorkers</code>(<code>tryLock</code>成功再<code>interrupt</code>)</li>
