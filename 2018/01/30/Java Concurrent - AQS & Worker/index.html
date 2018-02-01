@@ -89,7 +89,8 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://7xokux.com1.z0.glb.clouddn.com/TheadPoolExecutor-Worker-tryLock.png">
 <meta property="og:image" content="http://7xokux.com1.z0.glb.clouddn.com/ThreadPoolExecutor-Worker%23Lock.png">
-<meta property="og:updated_time" content="2018-01-31T11:05:13.256Z">
+<meta property="og:image" content="http://7xokux.com1.z0.glb.clouddn.com/WorkerLockExample.png">
+<meta property="og:updated_time" content="2018-02-01T03:25:51.208Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java Concurrent - AQS &amp; Worker">
 <meta name="twitter:description" content="1. Overview之前提到过, ThreadPoolExecutor的内部类Worker维护了一个非常基本的锁结构. 方法不多, 可以由名知义: - lock - tryLock - unlock - isLocked Worker本身继承了AbstractQueuedSynchronizer(AQS)来实现上述功能的. 事实上, AQS是Java中数个并发工具的基础, 功能也比较复杂. 我们">
@@ -382,8 +383,10 @@
 </ul>
 <hr>
 <p> <code>Worker</code>看似是一个很典型的锁. 但是注意的是它的构造方法有这么一句<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setState(-1); // inhibit interrupts until runWorker</span><br></pre></td></tr></table></figure></p>
-<p>初始情况<code>state == -1</code>, 所以<code>compareAndSet(0, 1)</code>是永远无法成功的, 后面对此进行说明. 这里先假设, 初始状态<code>state == 0</code>.</p>
-<p>// TODO 具体实例 数据变化图 +</p>
+<p>初始情况<code>state == -1</code>, 所以<code>compareAndSet(0, 1)</code>是永远无法成功的, 后面对此进行说明. 这里先假设, 初始状态<code>state == 0</code>.  基于一个简单的示例说明数据变化</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Worker worker = new Worker();</span><br><span class="line">worker.lock();</span><br><span class="line"></span><br><span class="line">new Thread(() -&gt; &#123;</span><br><span class="line">	worker.lock();</span><br><span class="line">&#125;).start();</span><br><span class="line"></span><br><span class="line">Thread.sleep(1000);</span><br><span class="line">worker.unlock();</span><br></pre></td></tr></table></figure>
+<p>这个过程的数据变化如下图(Step 3可以留到下节后再回来看):</p>
+<p><img src="http://7xokux.com1.z0.glb.clouddn.com/WorkerLockExample.png" alt=""></p>
 <h3 id="4-4-unlock"><a href="#4-4-unlock" class="headerlink" title="4.4 unlock"></a>4.4 unlock</h3><p>假如线程A获取了锁, 线程B在等待. 当前专题下</p>
 <ul>
 <li><code>Worker</code>的<code>tryRelease</code>方法是一定会成功的.</li>
