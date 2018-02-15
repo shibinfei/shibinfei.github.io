@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Concurrent," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Overview基于Java1.6, 前后的版本实现都有所不同. 确定入口在通常情况下, 我们是配合线程池获取一个Future的:1234Callable&amp;lt;Integer&amp;gt; callable = () -&amp;gt; &amp;#123;	return 1;&amp;#125;;Future&amp;lt;Integer&amp;gt; future = Executors.newSingleThreadExecutor">
+<meta name="keywords" content="Concurrent">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java Concurrent - AQS &amp; FutureTask">
+<meta property="og:url" content="https://dancefirstthinklater.github.io/2018/02/15/Java Concurrent - AQS & FutureTask/index.html">
+<meta property="og:site_name" content="草草集">
+<meta property="og:description" content="Overview基于Java1.6, 前后的版本实现都有所不同. 确定入口在通常情况下, 我们是配合线程池获取一个Future的:1234Callable&amp;lt;Integer&amp;gt; callable = () -&amp;gt; &amp;#123;	return 1;&amp;#125;;Future&amp;lt;Integer&amp;gt; future = Executors.newSingleThreadExecutor">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-02-15T04:57:08.423Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java Concurrent - AQS &amp; FutureTask">
+<meta name="twitter:description" content="Overview基于Java1.6, 前后的版本实现都有所不同. 确定入口在通常情况下, 我们是配合线程池获取一个Future的:1234Callable&amp;lt;Integer&amp;gt; callable = () -&amp;gt; &amp;#123;	return 1;&amp;#125;;Future&amp;lt;Integer&amp;gt; future = Executors.newSingleThreadExecutor">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://dancefirstthinklater.github.io/2018/02/15/Java Concurrent - AQS & FutureTask/"/>
+
+
+
+
+
+  <title>Java Concurrent - AQS & FutureTask | 草草集</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">草草集</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dancefirstthinklater.github.io/2018/02/15/Java Concurrent - AQS & FutureTask/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="shibinfei">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="草草集">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java Concurrent - AQS & FutureTask</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-15T12:56:36+08:00">
+                2018-02-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>基于Java1.6, 前后的版本实现都有所不同.</p>
+<h3 id="确定入口"><a href="#确定入口" class="headerlink" title="确定入口"></a>确定入口</h3><p>在通常情况下, 我们是配合线程池获取一个<code>Future</code>的:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Callable&lt;Integer&gt; callable = () -&gt; &#123;</span><br><span class="line">	return 1;</span><br><span class="line">&#125;;</span><br><span class="line">Future&lt;Integer&gt; future = Executors.newSingleThreadExecutor().submit(callable);</span><br></pre></td></tr></table></figure></p>
+<p>观察<code>submit</code>方法内部, 不考虑”池”的概念实际上等同于下面操作:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">RunnableFuture&lt;Integer&gt; runnableFuture = new FutureTask&lt;&gt;(callable);</span><br><span class="line">new Thread(runnableFuture).start();</span><br></pre></td></tr></table></figure>
+<p><code>RunnableFuture</code>本身实现了<code>Runnable</code>和<code>Future</code>.  从而可以确定<code>FutureTask</code>的两个重要入口方法: <code>run</code>, <code>get</code>.     </p>
+<h3 id="Sync"><a href="#Sync" class="headerlink" title="Sync"></a>Sync</h3><p>观察<code>FutureTask</code>内部, 同样有一个<code>Sync</code>. 和<code>CountDownLatch</code>相似, <code>FutureTask</code>本身也是个共享的同步工具. 由于一个线程被<code>unpark</code>后, 会继续传播<code>PROPAGATE</code>, 所以当<code>FutureTask</code>中的任务执行完成后, 所有调用<code>get</code>方法的线程都会退出阻塞.  <code>CountDownLatch</code>中<code>state</code>表示数量, 而在<code>FutureTask</code>则表示生命周期的状态:</p>
+<ul>
+<li>READY = 0 刚刚<code>new FutureTask</code>后的状态.</li>
+<li>RUNNING = 1</li>
+<li>RAN = 2 表示执行完毕</li>
+<li>CANCELED = 4</li>
+</ul>
+<p>可能会有人好奇为什么1,2之后就是4了. 实际上在1.5中, <code>FutureTask</code>有更多状态, 但是在1.6中去掉了.</p>
+<p>如果强行类比的话, 那么<code>get</code>就对应<code>CountDownLatch</code>的<code>await</code>. <code>run</code>/<code>cancel</code>则对应<code>countDown</code>.</p>
+<h2 id="get"><a href="#get" class="headerlink" title="get"></a>get</h2><p>调用关系如下:</p>
+<p><code>FutureTask#get</code> -&gt; <code>Sync#innerGet</code> -&gt; <code>AQS#acquireSharedInterruptibly(0)</code></p>
+<p>根据我们之前的了解, 如果没有<code>tryAcquireShared(0)</code>成功, 则当前线程会被挂起. 在此处, <code>tryAcquireShared</code>的参数是没有任何意义的, 所以形参被取名叫<code>ignore</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">protected int tryAcquireShared(int ignore) &#123;</span><br><span class="line">    return innerIsDone() ? 1 : -1;	// 大于等于0 表示acquire成功</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>innerIsDone</code>大致为判断了状态是否为<code>RAN</code>或者<code>CANCELED</code>, 也就是说, 当其他线程将<code>state</code>设置为这两种状态之后, 等待线程才能结束运行. 当等待线程被唤醒后, 会做两个判断, 代码非常简单:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if (getState() == CANCELLED)</span><br><span class="line">     throw new CancellationException();</span><br><span class="line">if (exception != null)</span><br><span class="line">     throw new ExecutionException(exception);</span><br><span class="line">return result;</span><br></pre></td></tr></table></figure>
+<h2 id="run"><a href="#run" class="headerlink" title="run"></a>run</h2><p><code>FutureTask#run</code> 中仅为调用 <code>Sync#innerRun</code>. 其中执行了<code>callable#call</code>, 没有异常则<code>set</code>, 反之则<code>setException</code>. 分别对应<code>Sync#innerSet</code>, <code>Sync#innerSetException</code>.     </p>
+<p>观察两个方法, 其中的重要内容就是把<code>state</code>CAS为<code>RAN</code>, 并<code>doReleaseShared(0)</code>.  在<code>CountDownLatch</code>中有提到过这个方法, 子类的重点在于<code>tryReleaseShared</code>是如何实现的, 一定是返回<code>true</code>的, 且内容非常简单粗暴:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">protected boolean tryReleaseShared(int ignore) &#123;</span><br><span class="line">    runner = null;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到, 这个方法的参数同样是无意义的. 其中的<code>runner</code>指的是执行<code>FutureTask</code>的线程, 即调用<code>set</code>,<code>setException</code>的线程. 实际上刚刚的<code>innerIsDone</code>除了判断状态之外, 还要求<code>runner == null</code>, 对应地, 他在<code>tryReleaseShared</code>这里被置为<code>null</code>.</p>
+<h2 id="cancel"><a href="#cancel" class="headerlink" title="cancel"></a>cancel</h2><p>大体和<code>set</code>, <code>setException</code>一致, 都是将<code>state</code>CAS为一个值, 此处为<code>CANCELED</code>. 并且执行<code>doReleaseShared</code>. 除次之外, 如果为<code>cancel(true)</code>还会根据参数对执行任务的线程进行<code>interrupt</code>. 但是我们知道<code>interrupt</code>不一定成功, 观察下面的栗子:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) throws InterruptedException, ExecutionException, TimeoutException &#123;</span><br><span class="line">	Callable&lt;Integer&gt; callable = () -&gt; &#123;</span><br><span class="line">		spinFor(4, TimeUnit.SECONDS);</span><br><span class="line">		System.out.println(&quot;Done&quot;);</span><br><span class="line">		return 1;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	RunnableFuture&lt;Integer&gt; runnableFuture = new FutureTask&lt;&gt;(callable);</span><br><span class="line">	new Thread(runnableFuture).start();</span><br><span class="line"></span><br><span class="line">	Thread.sleep(1000);	// ensure the other thread has started</span><br><span class="line">	runnableFuture.cancel(true);</span><br><span class="line">	System.out.println(runnableFuture.get(3, TimeUnit.SECONDS));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private static void spinFor(long duration, TimeUnit timeUnit) &#123;</span><br><span class="line">	long nanos = TimeUnit.NANOSECONDS.convert(duration, timeUnit);</span><br><span class="line">	long lastTime = System.nanoTime();</span><br><span class="line"></span><br><span class="line">	while (System.nanoTime() - lastTime &lt; nanos) &#123;</span><br><span class="line">		// nothing</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以发现, <code>cancel</code>之后, <code>get</code>线程马上就得到响应, 抛出异常了. 而执行线程仍然要在等待几秒后执行完.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Concurrent/" rel="tag"># Concurrent</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/14/Java Concurrent - AQS & CountDownLatch/" rel="next" title="Java Concurrent - AQS & CountDownLatch">
+                <i class="fa fa-chevron-left"></i> Java Concurrent - AQS & CountDownLatch
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">shibinfei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/DanceFirstThinkLater" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Overview"><span class="nav-text">Overview</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#确定入口"><span class="nav-text">确定入口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sync"><span class="nav-text">Sync</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get"><span class="nav-text">get</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#run"><span class="nav-text">run</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cancel"><span class="nav-text">cancel</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">shibinfei</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
