@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="草草集">
 <meta property="og:description" content="Overview基于Java1.6, 前后的版本实现都有所不同. 确定入口在通常情况下, 我们是配合线程池获取一个Future的:1234Callable&amp;lt;Integer&amp;gt; callable = () -&amp;gt; &amp;#123;	return 1;&amp;#125;;Future&amp;lt;Integer&amp;gt; future = Executors.newSingleThreadExecutor">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-15T04:57:08.423Z">
+<meta property="og:updated_time" content="2018-03-02T06:53:22.918Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java Concurrent - AQS &amp; FutureTask">
 <meta name="twitter:description" content="Overview基于Java1.6, 前后的版本实现都有所不同. 确定入口在通常情况下, 我们是配合线程池获取一个Future的:1234Callable&amp;lt;Integer&amp;gt; callable = () -&amp;gt; &amp;#123;	return 1;&amp;#125;;Future&amp;lt;Integer&amp;gt; future = Executors.newSingleThreadExecutor">
@@ -344,7 +344,6 @@
 <li>RAN = 2 表示执行完毕</li>
 <li>CANCELED = 4</li>
 </ul>
-<p>可能会有人好奇为什么1,2之后就是4了. 实际上在1.5中, <code>FutureTask</code>有更多状态, 但是在1.6中去掉了.</p>
 <p>如果强行类比的话, 那么<code>get</code>就对应<code>CountDownLatch</code>的<code>await</code>. <code>run</code>/<code>cancel</code>则对应<code>countDown</code>.</p>
 <h2 id="get"><a href="#get" class="headerlink" title="get"></a>get</h2><p>调用关系如下:</p>
 <p><code>FutureTask#get</code> -&gt; <code>Sync#innerGet</code> -&gt; <code>AQS#acquireSharedInterruptibly(0)</code></p>
