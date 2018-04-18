@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="草草集">
 <meta property="og:description" content="Overview了解本部分请先参考: Dubbo User Book - 6.4 线程模型 · GitBook 相关代码位于 dubbo-remoting-api Call stack如果你曾经在Provider端的服务实现类中打过断点, 会发现调用是从ChannelEventRunnable.run()开始的, 这是因为默认情况下, Provider端的业务调用都是在一个单独的线程池中执行的,">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-04-18T03:20:12.313Z">
+<meta property="og:updated_time" content="2018-04-18T03:22:05.133Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dubbo Feature - 01. 线程模型">
 <meta name="twitter:description" content="Overview了解本部分请先参考: Dubbo User Book - 6.4 线程模型 · GitBook 相关代码位于 dubbo-remoting-api Call stack如果你曾经在Provider端的服务实现类中打过断点, 会发现调用是从ChannelEventRunnable.run()开始的, 这是因为默认情况下, Provider端的业务调用都是在一个单独的线程池中执行的,">
@@ -340,7 +340,6 @@
 <p>根据此类上的<code>@SPI(AllDispatcher.NAME)</code>也可知默认为<code>AllDispatcher</code>. 实际的逻辑封装在<code>AllDispatcher</code>中返回的<code>AllChannelHandler</code>. 在其中的<code>received</code>方法中打断点, 调用栈如下:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NettyServer.received(Channel, Object)</span><br><span class="line">	-&gt; MultiMessageHandler.received(Channel, Object)</span><br><span class="line">		-&gt; HeartbeatHandler.received(Channel, Object)</span><br><span class="line">			-&gt; AllChannelHandler.received(Channel, Object)</span><br></pre></td></tr></table></figure>
 <p>由此Provider端调用栈即可形成一个闭环: 从Netty -&gt; 具体的业务实现.</p>
-<p>// TODO 在哪里加载的呢</p>
 <h2 id="线程模型-Dispatcher"><a href="#线程模型-Dispatcher" class="headerlink" title="线程模型 - Dispatcher"></a>线程模型 - Dispatcher</h2><p>除了<code>DirectDispatcher</code>之外, 每一种配置都对应了一种<code>ChannelHandler</code>的实现类. 他们都是<code>WrappedChannelHandler</code>的子类.  </p>
 <p><code>ChannelHandler</code>在Dubbo中很重要, 还有很多相关的子类暂时不需要关注. 我们先来看一下: <code>DirectDispatcher</code>和<code>AllDispatcher</code></p>
 <ul>
