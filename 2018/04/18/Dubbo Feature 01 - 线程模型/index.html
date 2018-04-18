@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Dubbo," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Overview了解本部分请先参考: Dubbo User Book - 6.4 线程模型 · GitBook 相关代码位于 dubbo-remoting-api Call stack如果你曾经在Provider端的服务实现类中打过断点, 会发现调用是从ChannelEventRunnable.run()开始的, 这是因为默认情况下, Provider端的业务调用都是在一个单独的线程池中执行的,">
+<meta name="keywords" content="Dubbo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dubbo Feature - 01. 线程模型">
+<meta property="og:url" content="https://dancefirstthinklater.github.io/2018/04/18/Dubbo Feature 01 - 线程模型/index.html">
+<meta property="og:site_name" content="草草集">
+<meta property="og:description" content="Overview了解本部分请先参考: Dubbo User Book - 6.4 线程模型 · GitBook 相关代码位于 dubbo-remoting-api Call stack如果你曾经在Provider端的服务实现类中打过断点, 会发现调用是从ChannelEventRunnable.run()开始的, 这是因为默认情况下, Provider端的业务调用都是在一个单独的线程池中执行的,">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-04-18T03:20:12.313Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dubbo Feature - 01. 线程模型">
+<meta name="twitter:description" content="Overview了解本部分请先参考: Dubbo User Book - 6.4 线程模型 · GitBook 相关代码位于 dubbo-remoting-api Call stack如果你曾经在Provider端的服务实现类中打过断点, 会发现调用是从ChannelEventRunnable.run()开始的, 这是因为默认情况下, Provider端的业务调用都是在一个单独的线程池中执行的,">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://dancefirstthinklater.github.io/2018/04/18/Dubbo Feature 01 - 线程模型/"/>
+
+
+
+
+
+  <title>Dubbo Feature - 01. 线程模型 | 草草集</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">草草集</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dancefirstthinklater.github.io/2018/04/18/Dubbo Feature 01 - 线程模型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="shibinfei">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="草草集">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Dubbo Feature - 01. 线程模型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-18T11:18:57+08:00">
+                2018-04-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>了解本部分请先参考: <a href="http://dubbo.apache.org/books/dubbo-user-book/demos/thread-model.html" target="_blank" rel="noopener">Dubbo User Book - 6.4 线程模型 · GitBook</a></p>
+<p>相关代码位于 <em>dubbo-remoting-api</em></p>
+<h3 id="Call-stack"><a href="#Call-stack" class="headerlink" title="Call stack"></a>Call stack</h3><p>如果你曾经在Provider端的服务实现类中打过断点, 会发现调用是从<code>ChannelEventRunnable.run()</code>开始的, 这是因为默认情况下, Provider端的业务调用都是在一个单独的线程池中执行的, 即<code>WrappedChannelHandler</code>中的<code>executor</code>.</p>
+<p>从IO线程中获取的数据分发到业务线程池, 这一功能在Dubbo被抽象成了<code>Dispatcher</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ChannelHandler dispatch(ChannelHandler handler, URL url);</span><br></pre></td></tr></table></figure>
+<p>根据此类上的<code>@SPI(AllDispatcher.NAME)</code>也可知默认为<code>AllDispatcher</code>. 实际的逻辑封装在<code>AllDispatcher</code>中返回的<code>AllChannelHandler</code>. 在其中的<code>received</code>方法中打断点, 调用栈如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NettyServer.received(Channel, Object)</span><br><span class="line">	-&gt; MultiMessageHandler.received(Channel, Object)</span><br><span class="line">		-&gt; HeartbeatHandler.received(Channel, Object)</span><br><span class="line">			-&gt; AllChannelHandler.received(Channel, Object)</span><br></pre></td></tr></table></figure>
+<p>由此Provider端调用栈即可形成一个闭环: 从Netty -&gt; 具体的业务实现.</p>
+<p>// TODO 在哪里加载的呢</p>
+<h2 id="线程模型-Dispatcher"><a href="#线程模型-Dispatcher" class="headerlink" title="线程模型 - Dispatcher"></a>线程模型 - Dispatcher</h2><p>除了<code>DirectDispatcher</code>之外, 每一种配置都对应了一种<code>ChannelHandler</code>的实现类. 他们都是<code>WrappedChannelHandler</code>的子类.  </p>
+<p><code>ChannelHandler</code>在Dubbo中很重要, 还有很多相关的子类暂时不需要关注. 我们先来看一下: <code>DirectDispatcher</code>和<code>AllDispatcher</code></p>
+<ul>
+<li><code>DirectDispatcher</code>最简单, 它直接返回了传入的<code>ChannelHandler</code>, 这个类即为<code>DecodeHandler</code>. 联系上面的调用栈可知下一步调用即为<code>DecodeHandler#received</code></li>
+<li><code>AllDispatcher</code>覆盖了<code>WrappedChannelHandler</code>的几乎所有方法, 都是实例化一个<code>ChannelEventRunnable</code>, 交给<code>executor</code>执行. 在<code>ChannelEventRunnable</code>的<code>run</code>方法中再执行<code>DecodeHandler</code>的后续操作.</li>
+</ul>
+<p>如果了解过Dubbo的其他代码, 可以发现这又是常见的<strong>装饰模式</strong>.  四个类对后续的<code>ChannelHandler</code>(实际上是<code>DecodeHandler</code>)进行装饰, 实现内容实际上比较简单.</p>
+<p>这里有个值得注意的问题是, execution 这一策略, 并没有实现. 具体实现跟文档描述并不一致. 可以参考<a href="https://github.com/apache/incubator-dubbo/issues/1089" target="_blank" rel="noopener">dispatcher:execution · Issue #1089 · apache/incubator-dubbo · GitHub</a> 以及 <a href="https://github.com/apache/incubator-dubbo/pull/1449" target="_blank" rel="noopener">fixes #1089, make ExecutionDispatcher meet dubbo-user-book by qct · Pull Request #1449 · apache/incubator-dubbo · GitHub</a></p>
+<h2 id="线程池配置"><a href="#线程池配置" class="headerlink" title="线程池配置"></a>线程池配置</h2><p>线程池的实例化在<code>WrappedChannelHandler</code>中:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">executor = (ExecutorService) ExtensionLoader.getExtensionLoader(ThreadPool.class).getAdaptiveExtension().getExecutor(url);</span><br></pre></td></tr></table></figure>
+<p>默认情况下使用<code>FixedThreadPool</code>,  位于dubbo-commons</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class FixedThreadPool implements ThreadPool &#123;</span><br><span class="line"></span><br><span class="line">    public Executor getExecutor(URL url) &#123;</span><br><span class="line">        String name = url.getParameter(Constants.THREAD_NAME_KEY, Constants.DEFAULT_THREAD_NAME);</span><br><span class="line">        int threads = url.getParameter(Constants.THREADS_KEY, Constants.DEFAULT_THREADS);</span><br><span class="line">        int queues = url.getParameter(Constants.QUEUES_KEY, Constants.DEFAULT_QUEUES);</span><br><span class="line">        return new ThreadPoolExecutor(threads, threads, 0, TimeUnit.MILLISECONDS,</span><br><span class="line">                queues == 0 ? new SynchronousQueue&lt;Runnable&gt;() :</span><br><span class="line">                        (queues &lt; 0 ? new LinkedBlockingQueue&lt;Runnable&gt;()</span><br><span class="line">                                : new LinkedBlockingQueue&lt;Runnable&gt;(queues)),</span><br><span class="line">                new NamedThreadFactory(name, true), new AbortPolicyWithReport(name, url));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可见默认情况下, 创建一个大小为200的线程池; 使用队列<code>SynchronousQueue</code>, 即可看作没有使用队列缓存元素. 并在饱和时抛出异常, 同时<code>jstack</code>日志到文件(<code>AbortPolicyWithReport</code>) .</p>
+<h4 id="你或许需要使用MessageOnlyDispatcher"><a href="#你或许需要使用MessageOnlyDispatcher" class="headerlink" title="你或许需要使用MessageOnlyDispatcher:"></a>你或许需要使用<code>MessageOnlyDispatcher</code>:</h4><p>如果Dubbo线程池占满时, 很可能发现调用端获得的是超时异常.</p>
+<p>注意上文提到的<code>WrappedChannelHandler</code>中有一个<code>caught</code>方法, 当发生异常时(暂时不需要了解此处的调用关系)会被执行.  参考下方<a href="http://manzhizhen.iteye.com/blog/2391177" target="_blank" rel="noopener">See Also第一篇</a>, 使用<code>AllChannelHandler</code>策略时, <code>caught</code>方法由于线程池满也被拒绝, 导致无法返回, 调用端只能等到Timeout.</p>
+<p>另外一个问题是, <code>AllDispatcher</code>中如果判断<code>executor</code>为空或者已经<code>shutdown</code>, 会去拿<code>SHARED_EXECUTOR</code>. 这种场景并没有想到何时回出现, 希望知道的朋友指点.</p>
+<h2 id="Call-Stack-上游"><a href="#Call-Stack-上游" class="headerlink" title="Call Stack 上游"></a>Call Stack 上游</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">protected ChannelHandler wrapInternal(ChannelHandler handler, URL url) &#123;</span><br><span class="line">    return new MultiMessageHandler(new HeartbeatHandler(ExtensionLoader.getExtensionLoader(Dispatcher.class)</span><br><span class="line">            .getAdaptiveExtension().dispatch(handler, url)));	// 此处断点. handler就是上文提到的DecodeHandler</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>省略了部分调用:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ServiceBean.doExport()</span><br><span class="line">	-&gt; DubboProtocol.export()</span><br><span class="line">		-&gt; DubboProtocol.createServer</span><br><span class="line">			-&gt; HeaderExchangers.bind</span><br><span class="line">				-&gt; NettyTransporter.bind</span><br><span class="line">					-&gt; NettyServer.&lt;init&gt;</span><br><span class="line">						-&gt; ChannelHandlers.wrap</span><br><span class="line">							-&gt; ChannelHandlers.wrapInternal</span><br></pre></td></tr></table></figure>
+<h2 id="See-Also"><a href="#See-Also" class="headerlink" title="See Also"></a>See Also</h2><ul>
+<li><a href="http://manzhizhen.iteye.com/blog/2391177" target="_blank" rel="noopener">再说Provider线程池被EXHAUSTED - 大步流星 - ITeye博客</a></li>
+<li><a href="https://github.com/kamranahmedse/design-patterns-for-humans#-decorator" target="_blank" rel="noopener">Design Patterns for Humans™ - Decorator</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Dubbo/" rel="tag"># Dubbo</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/04/Outline of JVM Concepts - 01. 内存模型/" rel="next" title="Outline of JVM Concepts - 01. 内存模型">
+                <i class="fa fa-chevron-left"></i> Outline of JVM Concepts - 01. 内存模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">shibinfei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/DanceFirstThinkLater" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Overview"><span class="nav-text">Overview</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Call-stack"><span class="nav-text">Call stack</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程模型-Dispatcher"><span class="nav-text">线程模型 - Dispatcher</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程池配置"><span class="nav-text">线程池配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#你或许需要使用MessageOnlyDispatcher"><span class="nav-text">你或许需要使用MessageOnlyDispatcher:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Call-Stack-上游"><span class="nav-text">Call Stack 上游</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#See-Also"><span class="nav-text">See Also</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">shibinfei</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
