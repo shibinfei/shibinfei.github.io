@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java Tools," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Foreword本章内容基于JDK8.  相关内容在Java Platform, Standard Edition Tools Reference for Oracle JDK on Solaris, Linux, and OS X, Release 8写的很详细.  JDK基本工具类位于$JAVA_HOME/bin. 这些工具类的实现基于tools.jar, 它不是Java标准API, HotS">
+<meta name="keywords" content="Java Tools">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM Tools">
+<meta property="og:url" content="https://dancefirstthinklater.github.io/2018/05/13/JVM - Tools/index.html">
+<meta property="og:site_name" content="草草集">
+<meta property="og:description" content="Foreword本章内容基于JDK8.  相关内容在Java Platform, Standard Edition Tools Reference for Oracle JDK on Solaris, Linux, and OS X, Release 8写的很详细.  JDK基本工具类位于$JAVA_HOME/bin. 这些工具类的实现基于tools.jar, 它不是Java标准API, HotS">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-05-13T08:41:08.541Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM Tools">
+<meta name="twitter:description" content="Foreword本章内容基于JDK8.  相关内容在Java Platform, Standard Edition Tools Reference for Oracle JDK on Solaris, Linux, and OS X, Release 8写的很详细.  JDK基本工具类位于$JAVA_HOME/bin. 这些工具类的实现基于tools.jar, 它不是Java标准API, HotS">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://dancefirstthinklater.github.io/2018/05/13/JVM - Tools/"/>
+
+
+
+
+
+  <title>JVM Tools | 草草集</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">草草集</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dancefirstthinklater.github.io/2018/05/13/JVM - Tools/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="shibinfei">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="草草集">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JVM Tools</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-13T16:39:00+08:00">
+                2018-05-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><p>本章内容基于JDK8.  相关内容在<a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/index.html" target="_blank" rel="noopener">Java Platform, Standard Edition Tools Reference for Oracle JDK on Solaris, Linux, and OS X, Release 8</a>写的很详细.</p>
+<ul>
+<li>JDK基本工具类位于<code>$JAVA_HOME/bin</code>.</li>
+<li>这些工具类的实现基于<code>tools.jar</code>, 它不是Java标准API, HotSpot提供的.  所以能开箱即用的只有HotSpot虚拟机.  </li>
+<li>部分JDK小工具参考了UNIX命名方式, 如 <code>jps</code>和<code>ps</code>功能类似.  </li>
+<li>如果对命令的选项不清楚, 直接执行 <code>命令名 -help</code>即可查询.</li>
+</ul>
+<h2 id="1-jps"><a href="#1-jps" class="headerlink" title="1. jps"></a>1. jps</h2><p>列出正在运行的虚拟机进程. <code>jps [options] [hostid]</code></p>
+<ul>
+<li>-m : 输出传递给main函数的参数</li>
+<li>-l : 输出主类的全名/jar包路径</li>
+<li>-v : 输出JVM参数</li>
+</ul>
+<h2 id="2-jstat"><a href="#2-jstat" class="headerlink" title="2. jstat"></a>2. jstat</h2><p>这个命令功能比较多, 根据选项可以对一个JVM进程某个特定指标进行查询. 这里展示的结果项非常多,</p>
+<p>比如查看GC情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jstac -gc 5234 // 查看进程好5234的GC情况</span><br><span class="line"></span><br><span class="line"> S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT</span><br><span class="line">61440.0 61440.0 10961.4  0.0   491520.0 10220.7   204800.0   32791.2   62688.0 61132.7 7412.0 7099.1     10    1.826   4      0.261    2.087</span><br></pre></td></tr></table></figure>
+<p>观察结果, 截止到<code>CCSU</code>之前都可用下面两条组合解释:</p>
+<ul>
+<li><code>S0</code>, <code>S1</code>表示新生代中的两个Survivor区域. E表示Eden. O表示Old Gen. M表示MetaSpace. CCS表示压缩类空间(Compressed Class Space), 它是MetaSpace的一部分.</li>
+<li>C即Capacity, 表示容量. U为USED, 表示已用多少. 单位都是KB.</li>
+</ul>
+<p><code>CCSU</code>后面的含义如下;</p>
+<ul>
+<li>YGC : 年轻代GC次数</li>
+<li>YGCT : 年轻代GC时间</li>
+<li>FGC : 年老代GC次数</li>
+<li>FGCT : 年老带GC时间</li>
+<li>GCT : GC消耗总时间</li>
+</ul>
+<p><code>jstat</code>的基本格式为:  <code>jstat [option vmid [interval[s|ms]] [count]]</code>.</p>
+<p>刚刚的<code>option</code>是<code>-gc</code>. <code>interval</code>和<code>count</code>分别表示: 每隔<code>interval</code>执行一次, 共执行<code>count</code>次后结束. <code>jstat -gc 5234 2s 3</code>, 即没两秒执行一次, 执行3次后结束. 除了<code>-gc</code>之外还支持:</p>
+<h3 id="class"><a href="#class" class="headerlink" title="-class"></a>-class</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">stat -class 5234</span><br><span class="line">Loaded  Bytes  Unloaded  Bytes     Time</span><br><span class="line"> 10751 20031.0        0     0.0      15.25</span><br></pre></td></tr></table></figure>
+<p>依次表示 加载的类数量,  字节数,  卸载的类数量, 卸载的类字节数. 加载类耗费的时间.</p>
+<h3 id="complier"><a href="#complier" class="headerlink" title="-complier"></a>-complier</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jstat -compiler 5234</span><br><span class="line">Compiled Failed Invalid   Time   FailedType FailedMethod</span><br><span class="line">    9198      2       0    79.12          1 sun/misc/URLClassPath getNextLoader</span><br></pre></td></tr></table></figure>
+<h3 id="printcompilation"><a href="#printcompilation" class="headerlink" title="-printcompilation"></a>-printcompilation</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jstat -printcompilation 5234</span><br><span class="line">Compiled  Size  Type Method</span><br><span class="line">    9198     57    1 com/netflix/servo/monitor/Monitors isNumericType</span><br></pre></td></tr></table></figure>
+<h3 id="其他GC相关"><a href="#其他GC相关" class="headerlink" title="其他GC相关"></a>其他GC相关</h3><h4 id="gccapacity"><a href="#gccapacity" class="headerlink" title="-gccapacity"></a>-gccapacity</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jstat -gccapacity 5234</span><br><span class="line"> NGCMN    NGCMX     NGC     S0C   S1C       EC      OGCMN      OGCMX       OGC         OC       MCMN     MCMX      MC     CCSMN    CCSMX     CCSC    YGC    FGC</span><br><span class="line">614400.0 614400.0 614400.0 61440.0 61440.0 491520.0   204800.0   204800.0   204800.0   204800.0      0.0 1103872.0  62688.0      0.0 1048576.0   7412.0     10     4</span><br></pre></td></tr></table></figure>
+<p>观察后缀, 主要多了<code>MN</code>, <code>MX</code>, 同样指的是<code>Capacity</code>,分别表示最小, 最大.</p>
+<h4 id="gcutil"><a href="#gcutil" class="headerlink" title="-gcutil"></a>-gcutil</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jstat -gcutil 5234</span><br><span class="line">  S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT</span><br><span class="line"> 17.84   0.00   9.50  16.01  97.52  95.78     10    1.826     4    0.261    2.087</span><br></pre></td></tr></table></figure>
+<p>以百分比格式输出占用量.</p>
+<h4 id="gcnew-gcold-gcnewcapacity-gcoldcapacity"><a href="#gcnew-gcold-gcnewcapacity-gcoldcapacity" class="headerlink" title="-gcnew, -gcold, -gcnewcapacity, -gcoldcapacity"></a>-gcnew, -gcold, -gcnewcapacity, -gcoldcapacity</h4><p>功能应该可以猜到了.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">jstat -gcold 5234</span><br><span class="line">   MC       MU      CCSC     CCSU       OC          OU       YGC    FGC    FGCT     GCT</span><br><span class="line"> 62688.0  61132.7   7412.0   7099.1    204800.0     32791.2     10     4    0.261    2.087</span><br><span class="line"></span><br><span class="line">jstat -gcnew 5234</span><br><span class="line"> S0C    S1C    S0U    S1U   TT MTT  DSS      EC       EU     YGC     YGCT</span><br><span class="line">61440.0 61440.0 10961.4    0.0  6   6 30720.0 491520.0  46711.6     10    1.826</span><br></pre></td></tr></table></figure></p>
+<p>这里有点奇怪的是, 为什么MetaSpace归属到Old Gen的统计中了? 另外年轻代有三个之前没有看过的指标: <code>TT</code>, <code>MTT</code>, <code>DSS</code></p>
+<blockquote>
+<p>TT: Tenuring threshold.<br>MTT: Maximum tenuring threshold.<br>DSS: Desired survivor size (kB).</p>
+</blockquote>
+<h4 id="gccause"><a href="#gccause" class="headerlink" title="-gccause"></a>-gccause</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jstat -gccause 5234</span><br><span class="line">  S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT    LGCC                 GCC</span><br><span class="line"> 17.84   0.00  16.91  16.01  97.52  95.78     10    1.826     4    0.261    2.087 Allocation Failure   No GC</span><br></pre></td></tr></table></figure>
+<p>同样以百分比输出, 多了个<code>LGCC</code>, 即 Last GC Cause.  <code>GCC</code>, 表示当前GC原因.</p>
+<h2 id="3-jinfo"><a href="#3-jinfo" class="headerlink" title="3. jinfo"></a>3. jinfo</h2><p>查看参数信息和System Properties.  很多框架都将属性<code>System.setProperties</code>, 可以直接通过此命令查看.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">jinfo 5234</span><br><span class="line"></span><br><span class="line">Attaching to process ID 5234, please wait...</span><br><span class="line">Debugger attached successfully.</span><br><span class="line">Server compiler detected.</span><br><span class="line">JVM version is 25.121-b13</span><br><span class="line">Java System Properties:</span><br><span class="line"></span><br><span class="line">java.runtime.name = Java(TM) SE Runtime Environment</span><br><span class="line">sun.rmi.transport.tcp.responseTimeout = 8000</span><br><span class="line">java.vm.version = 25.121-b13</span><br><span class="line">sun.boot.library.path = /usr/local/jdk1.8.0_121/jre/lib/amd64</span><br><span class="line">java.vendor.url = http://java.oracle.com/</span><br><span class="line">java.vm.vendor = Oracle Corporation</span><br><span class="line">path.separator = :</span><br><span class="line">file.encoding.pkg = sun.io</span><br><span class="line">java.vm.name = Java HotSpot(TM) 64-Bit Server VM</span><br><span class="line">sun.os.patch.level = unknown</span><br><span class="line">sun.java.launcher = SUN_STANDARD</span><br><span class="line">user.country = US</span><br><span class="line">user.dir = /data/dubbo/test-project/jiangnenghua</span><br><span class="line">java.vm.specification.name = Java Virtual Machine Specification</span><br><span class="line">PID = 5234</span><br><span class="line">java.runtime.version = 1.8.0_121-b13</span><br><span class="line">java.awt.graphicsenv = sun.awt.X11GraphicsEnvironment</span><br><span class="line">os.arch = amd64</span><br><span class="line">java.endorsed.dirs = /usr/local/jdk1.8.0_121/jre/lib/endorsed</span><br><span class="line">org.jboss.logging.provider = slf4j</span><br><span class="line">line.separator =</span><br><span class="line"></span><br><span class="line">java.io.tmpdir = /tmp</span><br><span class="line">java.vm.specification.vendor = Oracle Corporation</span><br><span class="line">os.name = Linux</span><br><span class="line">sun.jnu.encoding = UTF-8</span><br><span class="line">java.library.path = /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib</span><br><span class="line">spring.beaninfo.ignore = true</span><br><span class="line">sun.nio.ch.bugLevel =</span><br><span class="line">java.specification.name = Java Platform API Specification</span><br><span class="line">java.class.version = 52.0</span><br><span class="line">sun.management.compiler = HotSpot 64-Bit Tiered Compilers</span><br><span class="line">os.version = 3.10.0-693.2.2.el7.x86_64</span><br><span class="line">user.home = /home/publish</span><br><span class="line">user.timezone = Asia/Shanghai</span><br><span class="line">java.awt.printerjob = sun.print.PSPrinterJob</span><br><span class="line">file.encoding = UTF-8</span><br><span class="line">@appId = test-project</span><br><span class="line">java.specification.version = 1.8</span><br><span class="line">header.errorCode = true</span><br><span class="line">user.name = publish</span><br><span class="line">java.class.path = test-project.jar</span><br><span class="line">java.vm.specification.version = 1.8</span><br><span class="line">sun.arch.data.model = 64</span><br><span class="line">sun.java.command = test-project.jar</span><br><span class="line">java.home = /usr/local/jdk1.8.0_121/jre</span><br><span class="line">user.language = en</span><br><span class="line">java.specification.vendor = Oracle Corporation</span><br><span class="line">awt.toolkit = sun.awt.X11.XToolkit</span><br><span class="line">java.vm.info = mixed mode</span><br><span class="line">java.version = 1.8.0_121</span><br><span class="line">java.ext.dirs = /usr/local/jdk1.8.0_121/jre/lib/ext:/usr/java/packages/lib/ext</span><br><span class="line">sun.boot.class.path = /usr/local/jdk1.8.0_121/jre/lib/resources.jar:/usr/local/jdk1.8.0_121/jre/lib/rt.jar:/usr/local/jdk1.8.0_121/jre/lib/sunrsasign.jar:/usr/local/jdk1.8.0_121/jre/lib/jsse.jar:/usr/local/jdk1.8.0_121/jre/lib/jce.jar:/usr/local/jdk1.8.0_121/jre/lib/charsets.jar:/usr/local/jdk1.8.0_121/jre/lib/jfr.jar:/usr/local/jdk1.8.0_121/jre/classes</span><br><span class="line">java.awt.headless = true</span><br><span class="line">java.vendor = Oracle Corporation</span><br><span class="line">file.separator = /</span><br><span class="line">java.vendor.url.bug = http://bugreport.sun.com/bugreport/</span><br><span class="line">sun.io.unicode.encoding = UnicodeLittle</span><br><span class="line">sun.cpu.endian = little</span><br><span class="line">sun.cpu.isalist =</span><br><span class="line"></span><br><span class="line">VM Flags:</span><br><span class="line">Non-default VM flags: -XX:CICompilerCount=3 -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:+DisableExplicitGC -XX:InitialHeapSize=838860800 -XX:LargePageSizeInBytes=134217728 -XX:MaxHeapSize=838860800 -XX:MaxNewSize=629145600 -XX:MaxTenuringThreshold=6 -XX:MinHeapDeltaBytes=196608 -XX:NewSize=629145600 -XX:OldPLABSize=16 -XX:OldSize=209715200 -XX:+PrintGC -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:ThreadStackSize=512 -XX:+UseCMSInitiatingOccupancyOnly -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseFastAccessorMethods -XX:+UseFastUnorderedTimeStamps -XX:+UseParNewGC</span><br><span class="line">Command line:  -Xmx800m -Xms800m -Xmn600m -Xss512k -XX:PermSize=128m -XX:MaxPermSize=512m -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:LargePageSizeInBytes=128m -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -verbose:gc -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -Xloggc:/data/dubbo/test-project/log/jvm.log -Dfile.encoding=UTF-8 -Dheader.errorCode=true</span><br></pre></td></tr></table></figure>
+<h2 id="4-jmap"><a href="#4-jmap" class="headerlink" title="4. jmap"></a>4. jmap</h2><p>功能为dump出堆内存情况. 先看如何使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=test.dump 5234</span><br></pre></td></tr></table></figure>
+<p>把PID为5234的虚拟机进程堆内存情况dump到test.dump这个文件中.<br>如果指定live选项<code>jmap -dump:live,for...</code> 则表示只dumo对中活跃的对象. 注意结果文件不是人类可读的, 需要通过工具如<code>jhat</code>或者VisualVM这种工具来.  一般不使用<code>jhat</code>, 就不介绍了. 通过VisualVM 1.4.1, File -&gt; Load, 选择文件即可.</p>
+<p><code>dump</code>是最常用的, 除此之外还支持:</p>
+<ul>
+<li>没有任何选项. // TODO</li>
+<li>finalizerInfo: 打印F-Queue中等待Finalizer线程执行finalize方法的对象.</li>
+<li>F : 当使用<code>-dump</code>, <code>-histo</code>选项时, 如果虚拟机没有反应, 可以加此选项强制. 但不能和live子选项共同使用.</li>
+</ul>
+<h3 id="Heap"><a href="#Heap" class="headerlink" title="-Heap"></a>-Heap</h3><p>显示堆的摘要信息.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">jmap -heap 5234</span><br><span class="line">Attaching to process ID 5234, please wait...</span><br><span class="line">Debugger attached successfully.</span><br><span class="line">Server compiler detected.</span><br><span class="line">JVM version is 25.121-b13</span><br><span class="line"></span><br><span class="line">using parallel threads in the new generation.</span><br><span class="line">using thread-local object allocation.</span><br><span class="line">Concurrent Mark-Sweep GC</span><br><span class="line"></span><br><span class="line">Heap Configuration:</span><br><span class="line">   MinHeapFreeRatio         = 40</span><br><span class="line">   MaxHeapFreeRatio         = 70</span><br><span class="line">   MaxHeapSize              = 838860800 (800.0MB)</span><br><span class="line">   NewSize                  = 629145600 (600.0MB)</span><br><span class="line">   MaxNewSize               = 629145600 (600.0MB)</span><br><span class="line">   OldSize                  = 209715200 (200.0MB)</span><br><span class="line">   NewRatio                 = 2</span><br><span class="line">   SurvivorRatio            = 8</span><br><span class="line">   MetaspaceSize            = 21807104 (20.796875MB)</span><br><span class="line">   CompressedClassSpaceSize = 1073741824 (1024.0MB)</span><br><span class="line">   MaxMetaspaceSize         = 17592186044415 MB</span><br><span class="line">   G1HeapRegionSize         = 0 (0.0MB)</span><br><span class="line"></span><br><span class="line">Heap Usage:</span><br><span class="line">New Generation (Eden + 1 Survivor Space):</span><br><span class="line">   capacity = 566231040 (540.0MB)</span><br><span class="line">   used     = 143663072 (137.00778198242188MB)</span><br><span class="line">   free     = 422567968 (402.9922180175781MB)</span><br><span class="line">   25.371811478226274% used</span><br><span class="line">Eden Space:</span><br><span class="line">   capacity = 503316480 (480.0MB)</span><br><span class="line">   used     = 132438616 (126.30330657958984MB)</span><br><span class="line">   free     = 370877864 (353.69669342041016MB)</span><br><span class="line">   26.313188870747883% used</span><br><span class="line">From Space:</span><br><span class="line">   capacity = 62914560 (60.0MB)</span><br><span class="line">   used     = 11224456 (10.704475402832031MB)</span><br><span class="line">   free     = 51690104 (49.29552459716797MB)</span><br><span class="line">   17.840792338053387% used</span><br><span class="line">To Space:</span><br><span class="line">   capacity = 62914560 (60.0MB)</span><br><span class="line">   used     = 0 (0.0MB)</span><br><span class="line">   free     = 62914560 (60.0MB)</span><br><span class="line">   0.0% used</span><br><span class="line">concurrent mark-sweep generation:</span><br><span class="line">   capacity = 209715200 (200.0MB)</span><br><span class="line">   used     = 33578192 (32.02265930175781MB)</span><br><span class="line">   free     = 176137008 (167.9773406982422MB)</span><br><span class="line">   16.011329650878906% used</span><br><span class="line"></span><br><span class="line">27645 interned Strings occupying 3042984 bytes.</span><br></pre></td></tr></table></figure>
+<p>可以看到其中包含一些GC信息, 以及Interned String的数量和存储容量.</p>
+<h3 id="histo-histo-live"><a href="#histo-histo-live" class="headerlink" title="-histo (-histo:live)"></a>-histo (-histo:live)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">jmap -histo 5234 &gt;&gt; test.histo</span><br><span class="line">head test.histo</span><br><span class="line"></span><br><span class="line"> num     #instances         #bytes  class name</span><br><span class="line">----------------------------------------------</span><br><span class="line">   1:          5110        9967304  [I</span><br><span class="line">   2:         88631        9287640  [C</span><br><span class="line">   3:         87076        2089824  java.lang.String</span><br><span class="line">   4:         23722        2087536  java.lang.reflect.Method</span><br><span class="line">   5:          7440        1724888  [B</span><br><span class="line">   6:         45469        1455008  java.util.concurrent.ConcurrentHashMap$Node</span><br><span class="line">   7:         11349        1271616  java.lang.Class</span><br></pre></td></tr></table></figure>
+<p>显示堆中每个类的实例数量, 和所占容量大小. 也支持live选项, 含义和<code>-dump</code>中一样, 也表示仅仅统计活跃的对象.</p>
+<h3 id="clstats"><a href="#clstats" class="headerlink" title="-clstats"></a>-clstats</h3><p>打印堆中的ClassLoader统计. 包括名称, 活跃度, 地址, 父级ClassLoader, 加载的Class数量等信息.</p>
+<h2 id="5-jstack"><a href="#5-jstack" class="headerlink" title="5. jstack"></a>5. jstack</h2><p>线程信息, 支持选项</p>
+<ul>
+<li>-F : 当VM hang住时使用此选项.</li>
+<li>-l : 显示锁信息</li>
+<li>-m : 如果有调用Native方法, 显示其(C/C++)栈信息()</li>
+</ul>
+<h2 id="VisualVM"><a href="#VisualVM" class="headerlink" title="VisualVM"></a>VisualVM</h2><p>VisualVM的功能实际上是上述几个命令的集合. 一个问题是VisualVM通常不会安装在服务端, 所以需要Server开启JMX端口, 才可以被监控. 需要添加的JVM参数如下:</p>
+<ul>
+<li>-Dcom.sun.management.jmxremote.port=9876 // 为VM实例指定JMX端口</li>
+<li>-Dcom.sun.management.jmxremote.ssl=false // 禁用ssl</li>
+<li>-Dcom.sun.management.jmxremote.authenticate=false // 禁用授权校验 (用户名密码)</li>
+<li>-Djava.rmi.server.hostname=10.1.5.54 // 本机IP</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java-Tools/" rel="tag"># Java Tools</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/26/Dubbo Feature 03 - 连接模型/" rel="next" title="Dubbo Feature - 03. 连接模型">
+                <i class="fa fa-chevron-left"></i> Dubbo Feature - 03. 连接模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">shibinfei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/DanceFirstThinkLater" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Foreword"><span class="nav-text">Foreword</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-jps"><span class="nav-text">1. jps</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-jstat"><span class="nav-text">2. jstat</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#class"><span class="nav-text">-class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#complier"><span class="nav-text">-complier</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#printcompilation"><span class="nav-text">-printcompilation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他GC相关"><span class="nav-text">其他GC相关</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gccapacity"><span class="nav-text">-gccapacity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gcutil"><span class="nav-text">-gcutil</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gcnew-gcold-gcnewcapacity-gcoldcapacity"><span class="nav-text">-gcnew, -gcold, -gcnewcapacity, -gcoldcapacity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gccause"><span class="nav-text">-gccause</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-jinfo"><span class="nav-text">3. jinfo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-jmap"><span class="nav-text">4. jmap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Heap"><span class="nav-text">-Heap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#histo-histo-live"><span class="nav-text">-histo (-histo:live)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clstats"><span class="nav-text">-clstats</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-jstack"><span class="nav-text">5. jstack</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VisualVM"><span class="nav-text">VisualVM</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">shibinfei</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
