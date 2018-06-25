@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="草草集">
 <meta property="og:description" content="Overview分享一些在全宇宙最强交友大厂两年部分典型项目的设计经验和几个案例. 数据模型设计建议考虑使用没有业务含义的ID实际上这一点几乎是共识, 但是之前有0经验的同学问到, 突然发现也是很重要的一点. 以之前设计的用户表为例, 虽然最初业务仅支持手机号登录, 但使用手机号作为用户主键是完全不可行的, 原因即手机号有业务含义, 很容易发生变更 - 比如用户换了手机号, 或者手机有一天不再是主">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-06-25T08:46:24.587Z">
+<meta property="og:updated_time" content="2018-06-25T12:06:40.162Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="社交场景下的数据模型设计">
 <meta name="twitter:description" content="Overview分享一些在全宇宙最强交友大厂两年部分典型项目的设计经验和几个案例. 数据模型设计建议考虑使用没有业务含义的ID实际上这一点几乎是共识, 但是之前有0经验的同学问到, 突然发现也是很重要的一点. 以之前设计的用户表为例, 虽然最初业务仅支持手机号登录, 但使用手机号作为用户主键是完全不可行的, 原因即手机号有业务含义, 很容易发生变更 - 比如用户换了手机号, 或者手机有一天不再是主">
@@ -347,16 +347,16 @@
 <h4 id="互动关系"><a href="#互动关系" class="headerlink" title="互动关系"></a>互动关系</h4><p>社交类应用最常见的就是两个用户之间的互动关系, 比如关注, 送礼物. 这类业务的特点是会发生双向查询, 以关注为例, 会查询”我关注的”, 以及”关注我的”.</p>
 <p>同样, 关注功能的最基本设计如下.  如下表示ID为1的用户关注了ID为2的用户.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+------+----------+-----------+---------------------+</span><br><span class="line">| id   | follower | following | createTime          |</span><br><span class="line">+------+----------+-----------+---------------------+</span><br><span class="line">|    1 |        1 |         2 | 2018-05-25 10:30:18 |</span><br><span class="line">+------+----------+-----------+---------------------+</span><br></pre></td></tr></table></figure>
-<p>至于索引, 由于此类关系一般都需要双向查找, 即一个人会找自己关注的所有人, 以及一个人也会查看自己的所有粉丝, 所以<code>follower</code>,<code>following</code>一列都要单独建立索引.</p>
+<p>至于索引, 由于上文提到的”双向查询”问题, 所以<code>follower</code>,<code>following</code>一列都要单独建立索引.</p>
 <p>而终于有一天, 这个表数据量大到单表有点把持不住了(线上关注关系接近1亿) . 需要对表进行水平拆分, 例如采用分表的方式, 分成1000张表. 通常会按照用户ID来分表, 如果用户ID是整型那就更方便了 - 可以直接按照尾数拆分.</p>
 <p>不过这样问题就来了, 如果表结构不变, 以<code>follower</code>作为分表键, 那么查找一个用户关注的人没有问题, 但是一个用户找自己的粉丝却是不可行的, 因为<code>following</code>不是分表键, 这次查找需遍历所有的表.</p>
 <p>解决方案就是: 一个关注关系写两份数据, 并添加一列来标识”当前用户”, 从而保证一个用户的关注/粉丝固定在同一个表中. 先看下表结构:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from Followship_001;</span><br><span class="line">+------+------+----------+-----------+---------------------+</span><br><span class="line">| id   | uid  | follower | following | createTime          |</span><br><span class="line">+------+------+----------+-----------+---------------------+</span><br><span class="line">|    1 |    1 |        1 |         2 | 2018-05-25 10:49:52 |</span><br><span class="line">+------+------+----------+-----------+---------------------+</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from Followship_002;</span><br><span class="line">+------+------+----------+-----------+---------------------+</span><br><span class="line">| id   | uid  | follower | following | createTime          |</span><br><span class="line">+------+------+----------+-----------+---------------------+</span><br><span class="line">|    1 |    2 |        1 |         2 | 2018-05-25 10:49:47 |</span><br><span class="line">+------+------+----------+-----------+---------------------+</span><br></pre></td></tr></table></figure>
 <p>分表键为新增的<code>uid</code>字段, 并为其建立索引. 所以当我们找用户ID为1的关注列表, 只要<code>select * from Followship_001 where uid=1 and follower=uid</code>即可, 如果查找粉丝只需要把后面的条件换成<code>and following=uid</code>即可.</p>
-<p>这个模式也是个典型的空间换时间案例, 实际上都是出于同样的理念: 事先存储好, 而不是实时地去计算.  </p>
+<p>这个也是一个空间换时间的案例, 上面的例子都是出于同样的理念: 事先存储好, 而不是实时地去计算.  </p>
 <h3 id="用户数据和运营数据分离"><a href="#用户数据和运营数据分离" class="headerlink" title="用户数据和运营数据分离"></a>用户数据和运营数据分离</h3><p>这个问题源自内部的一个血泪教训. 之前照片的设计大致如下:  根据用户ID做分表,  并通过myisam的union机制实现跨越分表的查询. 而需要跨越分表的原因, 还需要看下字段设计:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">UserPhoto_00 &#123;</span><br><span class="line">	`uid` int(11),</span><br><span class="line">	`auditStatus` smallint(6),</span><br><span class="line">	`updateTime` datetime;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>大致看起来, 如果只做用户业务使用是没有什么问题的, 按照uid进行分表, 可以迅速定位到用户数据. 问题出在这张表同时也被审核人员使用, 而审核人员通常是按照时间(<code>updateTime</code>)来筛选数据的. 而数据量是亿级, 所以在这一列建立了索引, 而且控制了范围(比如只能查一周内)的情况下, 速度依然非常慢. 而且直接加大数据库压力, 影响普通用户的业务.  </p>
+<p>大致看起来, 如果只做用户业务使用是没有什么问题的, 按照uid进行分表, 可以迅速定位到用户数据. 问题出在这张表同时也被审核人员使用, 而审核人员通常是按照时间(<code>updateTime</code>)来筛选数据的. 在数据量亿级的场景下, 虽然我们为这一列建立了索引, 并控制了范围(比如只能查一周内), 但是查询速度依然非常慢. 而且直接加大数据库压力, 影响普通用户的业务.  </p>
 <p>正常的姿势, 当然是审核表单独划分出来~~~</p>
 <h2 id="具体案例"><a href="#具体案例" class="headerlink" title="具体案例"></a>具体案例</h2><h3 id="XX小组Feed设计"><a href="#XX小组Feed设计" class="headerlink" title="XX小组Feed设计"></a>XX小组Feed设计</h3><h4 id="功能介绍"><a href="#功能介绍" class="headerlink" title="功能介绍"></a>功能介绍</h4><p>2016年初参与了一个叫做”XX小组”的群组社交APP + 服务号开发. 实际上是借鉴了当时韩国非常火的”Band”. 国内实际上也有类似的App, 比如小密圈. 公司内部对于这个项目非常重视, 团队加班加点两个月开发完成后, 最终由于没钱投放胎死腹中. 当然了, 经验还是积累下来了.</p>
 <h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p>首先群组生产的内容(比如一篇文章)保存在以群ID为Sharding Key + 索引的表中.</p>
@@ -365,14 +365,14 @@
 <blockquote>
 <p>一般来说， 数据生成越频繁， 就越不应该将这些数据内嵌到其他文档中。 如果内嵌 字段或者内嵌字段数量是无限增长的， 那么应该将这些内容保存在单独的集合中， 使用引用的方式进行访问， 而不是内嵌到其他文档中。 评论列表或者活动列表等信 息应该保存在单独的集合中，不应该内嵌到其他文档中。</p>
 </blockquote>
-<p>出于上面提到的原因, 我们的评论等等内容都是单独保存到其他集合. 真是勇敢的尝试~</p>
+<p>出于上面提到的原因, 我们的评论等等内容都是单独保存到其他集合, 完全可以照搬到MySQL中.  在MongoDB运维经验为零的情况下, 真是一次勇敢的尝试.</p>
 <hr>
 <p>之前有看过其他公司的Feed方案, 都是基于Pull/Push的模型. 最近看&lt;设计数据密集型应用&gt;中第一章也有提到, 有兴趣可以了解一下. 不过具体业务和其他应用还是不大一样:</p>
 <ul>
 <li>与微博不同, 订阅内容来自”小组”而不是个人.</li>
 <li>每个组的人数是有限制的, 最多只有1000.</li>
 </ul>
-<p>实际上出于性能考虑, 每次刷新Feed列表即时的去拉是完全不可取的; 而且注意, 由于小组人数限制, 并不存在微博的”大V扇出”(一个用户拥有千万级别粉丝时, 需要冗余非常多的数据)的问题, 所以选择推模型比较合理.</p>
+<p>出于性能考虑, 每次刷新Feed列表即时去拉是完全不可取的; 另一方面, 由于小组人数限制, 并不存在微博的”大V扇出”(一个用户拥有千万级别粉丝时, 需要冗余非常多的数据)的问题, 所以选择推模型比较合理.</p>
 <p>综上, 除了群数据之外, 还为每个用户维护了一个缓存, 基于Redis的zset, 其中保存的成员为内容ID, score为时间.</p>
 <p>这个方案的优点是:</p>
 <ul>
