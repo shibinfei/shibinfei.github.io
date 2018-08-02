@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Unknown," />
+  <meta name="keywords" content=",,,,,,," />
 
 
 
@@ -81,9 +81,9 @@
 
 <meta name="description" content="Overview分享一些在全宇宙最强交友大厂两年部分典型项目的设计经验和几个案例. 数据模型设计建议考虑使用没有业务含义的ID实际上这一点几乎是共识, 但是之前有0经验的同学问到, 突然发现也是很重要的一点. 以之前设计的用户表为例, 虽然最初业务仅支持手机号登录, 但使用手机号作为用户主键是完全不可行的, 原因即手机号有业务含义, 很容易发生变更 - 比如用户换了手机号, 或者手机有一天不再是主">
 <meta name="keywords" content="Unknown">
-<meta property="og:type" content="article">
+<meta property="og:type" content="website">
 <meta property="og:title" content="社交场景下的数据模型设计">
-<meta property="og:url" content="https://shibinfei.github.io/2018/06/25/社交场景下的数据模型设计/index.html">
+<meta property="og:url" content="https://shibinfei.github.io/backup/社交场景下的数据模型设计.html">
 <meta property="og:site_name" content="草草集">
 <meta property="og:description" content="Overview分享一些在全宇宙最强交友大厂两年部分典型项目的设计经验和几个案例. 数据模型设计建议考虑使用没有业务含义的ID实际上这一点几乎是共识, 但是之前有0经验的同学问到, 突然发现也是很重要的一点. 以之前设计的用户表为例, 虽然最初业务仅支持手机号登录, 但使用手机号作为用户主键是完全不可行的, 原因即手机号有业务含义, 很容易发生变更 - 比如用户换了手机号, 或者手机有一天不再是主">
 <meta property="og:locale" content="zh-Hans">
@@ -120,7 +120,7 @@
 
 
 
-  <link rel="canonical" href="https://shibinfei.github.io/2018/06/25/社交场景下的数据模型设计/"/>
+  <link rel="canonical" href="https://shibinfei.github.io/backup/社交场景下的数据模型设计.html"/>
 
 
 
@@ -231,108 +231,24 @@
 
   <div id="posts" class="posts-expand">
     
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://shibinfei.github.io/2018/06/25/社交场景下的数据模型设计/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="shibinfei">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="草草集">
-    </span>
-
     
+    
+    <div class="post-block page">
       <header class="post-header">
 
-        
-        
-          <h1 class="post-title" itemprop="name headline">社交场景下的数据模型设计</h1>
-        
+	<h1 class="post-title" itemprop="name headline">社交场景下的数据模型设计</h1>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-25T16:27:52+08:00">
-                2018-06-25
-              </time>
-            
 
-            
 
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Unknown/" itemprop="url" rel="index">
-                    <span itemprop="name">Unknown</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
+</header>
 
       
       
-
       
-        <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>分享一些在全宇宙最强交友大厂两年部分典型项目的设计经验和几个案例.</p>
+      <div class="post-body">
+        
+        
+          <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>分享一些在全宇宙最强交友大厂两年部分典型项目的设计经验和几个案例.</p>
 <h2 id="数据模型设计建议"><a href="#数据模型设计建议" class="headerlink" title="数据模型设计建议"></a>数据模型设计建议</h2><h3 id="考虑使用没有业务含义的ID"><a href="#考虑使用没有业务含义的ID" class="headerlink" title="考虑使用没有业务含义的ID"></a>考虑使用没有业务含义的ID</h3><p>实际上这一点几乎是共识, 但是之前有0经验的同学问到, 突然发现也是很重要的一点. 以之前设计的用户表为例, 虽然最初业务仅支持手机号登录, 但使用手机号作为用户主键是完全不可行的, 原因即手机号有业务含义, 很容易发生变更 - 比如用户换了手机号, 或者手机有一天不再是主流通信方式(正如当年的邮箱一样).</p>
 <p>所以通常会使用没有业务含义的ID, 比如自增. 然后为其他的通信方式单独建立一张表关联, 手机单独存放一个表, 微信登录的openID单独存放一张表, 这样可以完美地应对业务变化.</p>
 <h3 id="冗余数据"><a href="#冗余数据" class="headerlink" title="冗余数据"></a>冗余数据</h3><p>这个概念实际上有点类似”反范式化”设计.  举个栗子, 在关系型数据库中有<code>t_user</code>, <code>t_biz</code>两个表, <code>t_biz</code>通过<code>f_uid</code>关联<code>t_user</code>的数据.  如果在<code>t_biz</code>的使用中需要使用到<code>t_user</code>的<code>f_sex</code>字段,  而且<code>f_sex</code>字段在业务上<strong>不允许变更</strong>. 在这里可以直接把<code>f_sex</code>字段直接保存在<code>t_biz</code>中, 避免数据关联.</p>
@@ -407,63 +323,15 @@
 <h4 id="实现-2"><a href="#实现-2" class="headerlink" title="实现"></a>实现</h4><p>实际上这里要强调下选型的重要性: 使用MongoDB的2DSphere索引可以非常方便的实现这一功能.  </p>
 <p>更重要的是, 服务端的位置依赖客户端上报, 但无法保证持续更新用户的位置. 举例如用户A上报了位置, 随后退出App, 那么数据库中对于的位置信息就不再变更了. 这样的话, 用户B看到附近有A, 而实际上A可能不在附近. 这里是Mongo的另一个方便之处: 支持TTL. 如果文档很久没有更新, 则自动过期, 即可解除业务上的缺陷.</p>
 
+        
+      </div>
+      
+      
       
     </div>
     
     
     
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/Unknown/" rel="tag"># Unknown</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2018/05/19/Kafka - Overview/" rel="next" title="Kafka基本结构和关键指标">
-                <i class="fa fa-chevron-left"></i> Kafka基本结构和关键指标
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
   </div>
 
 
@@ -521,7 +389,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -532,7 +400,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">1</span>
                   <span class="site-state-item-name">分类</span>
                 
               </div>
@@ -543,7 +411,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
